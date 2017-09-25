@@ -1,0 +1,5 @@
+- widget
+- add book
+- update book
+- start/ stop
+- average pages speed
