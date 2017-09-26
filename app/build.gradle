@@ -36,10 +36,9 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.1.0'
     testCompile 'junit:junit:4.12'
 
-    compile "com.google.dagger:dagger:2.11"
-    annotationProcessor "com.google.dagger:dagger-compiler:2.11"
-    provided 'javax.annotation:jsr250-api:1.0'
-    compile 'javax.inject:javax.inject:1'
+    compile 'com.google.dagger:dagger:2.11'
+    kapt 'com.google.dagger:dagger-compiler:2.11'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
 
     // RxJava
     compile 'io.reactivex:rxandroid:1.2.0'
@@ -59,6 +58,15 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:design:26.1.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    // Room
+    compile 'android.arch.persistence.room:runtime:1.0.0-alpha9-1'
+//    compile 'android.arch.persistence.room:rxjava2:1.0.0-alpha9-1'
+    kapt "android.arch.persistence.room:compiler:1.0.0-alpha9-1"
+
+    // LiveData
+    compile "android.arch.lifecycle:runtime:1.0.0"
+    compile "android.arch.lifecycle:extensions:1.0.0-alpha9-1"
 }
 repositories {
     mavenCentral()

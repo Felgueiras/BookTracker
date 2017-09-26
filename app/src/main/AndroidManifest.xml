@@ -3,6 +3,7 @@
     package="com.example.rafae.booktracker">
 
     <application
+        android:name=".daggerExample.DaggerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,9 +17,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.BookSingleView" />
+        <activity android:name=".daggerExample.DaggerActivity">
 
-        <receiver android:name=".StartStopReading">
+        </activity>
+        <activity android:name=".views.BookSingleView" />
+        <activity android:name=".views.BookAddView" />
+        <receiver android:name=".widgets.StartStopReading">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

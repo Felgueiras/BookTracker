@@ -1,6 +1,7 @@
 package com.example.rafae.booktracker
 
 import com.example.rafae.booktracker.models.Note
+import com.example.rafae.booktracker.objects.Book
 
 /**
  * Created by rafae on 24/09/2017.
@@ -10,32 +11,34 @@ import com.example.rafae.booktracker.models.Note
  * Aggregates all communication operations between MVP pattern layer:
  * Model, View and Presenter
  */
-interface MainMVP {
+interface BooksMVP {
 
     /**
      * View mandatory methods. Available to Presenter
-     * Presenter -> View
+     * Presenter -> BooksListView
      */
-    interface RequiredViewOps {
+    interface BooksListViewOps {
         fun showToast(msg: String)
 
+        fun newBookAdded(books: ArrayList<Book>)
+
         fun showAlert(msg: String)
-        // any other ops
     }
 
     /**
-     * Operations offered from Presenter to View
+     * Operations offered from View to View
      * View -> Presenter
      */
     interface PresenterOps {
-        fun onConfigurationChanged(view: RequiredViewOps)
+        fun onConfigurationChanged(view: BooksListViewOps)
 
         fun onDestroy(isChangingConfig: Boolean)
 
-        fun newNote(textoNota: String)
+        fun newBook(title: String, author: String, pages: Int)
 
-        fun removeNote(nota: Note)
-        // any other ops to be called from View
+        fun removeBook(nota: Note)
+
+        fun fetchBooks()
     }
 
     /**
@@ -43,7 +46,7 @@ interface MainMVP {
      * Model -> Presenter
      */
     interface RequiredPresenterOps {
-        fun onNoteInserted(novaNota: Note)
+        fun onBookInserted(novaNota: ArrayList<Book>)
 
         fun onNoteRemoved(notaRemovida: Note)
 
@@ -56,11 +59,14 @@ interface MainMVP {
      * Presenter -> Model
      */
     interface ModelOps {
-        fun insertNote(nota: Note)
+        fun insertBook(nota: Book)
 
         fun removeNote(nota: Note)
 
         fun onDestroy()
-        // Any other data operation
+
+        fun fetchBooks()
+
+
     }
 }

@@ -1,25 +1,36 @@
 package com.example.rafae.booktracker.objects
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.PrimaryKey
 import java.io.Serializable
 import java.util.Date
 
 /**
  * Created by rafae on 25/09/2017.
  */
+@Entity(tableName = "book")
+class Book(author: String, title: String, date: Date, pages: Int) : Serializable {
 
-class Book(author: String, title: String) : Serializable {
+    constructor() : this("", "", Date(), 0)
 
-    internal var title: String? = title
 
-    internal var author: String? = author
+    @PrimaryKey(autoGenerate = true)
+    var slNo: Int = 0
 
-    internal var dateAdded: Date? = null
+    var title: String? = title
 
-    internal var numPages: Int = 100
+    var author: String? = author
 
-    internal var currentPage: Int = 50
+    @Ignore
+    var dateAdded: Date? = date
 
-    internal var reading: Boolean = false
+    var numPages: Int = pages
 
-    internal var readingSessions: ArrayList<ReadingSession>? = null
+    var currentPage: Int = 50
+
+    @Ignore
+    var reading: Boolean = false
+    @Ignore
+    var readingSessions: ArrayList<ReadingSession>? = null
 }

@@ -46,12 +46,14 @@ internal class BooksListAdapter(private val books: ArrayList<Book>, private val 
         lateinit var title: TextView
         @BindView(R.id.bookAuthor)
         lateinit var author: TextView
+        lateinit var completion: TextView
 
         init {
             ButterKnife.bind(this, view)
 
             title = view.findViewById(R.id.bookTitle)
             author = view.findViewById(R.id.bookAuthor)
+            completion = view.findViewById(R.id.bookCompletion)
 
             view.setOnClickListener {
                 val intent = Intent(context, BookSingleView::class.java)
@@ -65,6 +67,9 @@ internal class BooksListAdapter(private val books: ArrayList<Book>, private val 
         fun bindBook(bk: Book) {
             title.text = bk.title
             author.text = bk.author
+            // TODO get book completion
+            val completionVal:Int = 50
+            completion.text = """${completionVal.toString()}%"""
             this.book = bk
 
 

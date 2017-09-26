@@ -1,24 +1,40 @@
 package com.example.rafae.booktracker.views
 
+
+import android.arch.lifecycle.LifecycleActivity
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-
-import java.util.ArrayList
-
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.example.rafae.booktracker.*
+import com.example.rafae.booktracker.BooksMVP
+import com.example.rafae.booktracker.R
+import com.example.rafae.booktracker.StateMaintainer
 import com.example.rafae.booktracker.objects.Book
-import com.example.rafae.booktracker.presenters.MainPresenter
+import com.example.rafae.booktracker.presenters.BooksListPresenter
+import java.util.*
+import kotlin.collections.ArrayList
 
-class BooksListView : AppCompatActivity(), MainMVP.RequiredViewOps {
+
+class BooksListView : AppCompatActivity(), BooksMVP.BooksListViewOps {
+
+
+    override fun newBookAdded(books: ArrayList<Book>) {
+        // update recycler view
+        val adapter = BooksListAdapter(books, applicationContext)
+
+        booksList.adapter = adapter
+//        booksList.invalidate()
+        adapter.notifyDataSetChanged()
+    }
 
     /**
      * Tag for logging.
@@ -30,7 +46,7 @@ class BooksListView : AppCompatActivity(), MainMVP.RequiredViewOps {
     private val mStateMaintainer = StateMaintainer(this.fragmentManager, TAG)
 
     // Presenter operations
-    private var mPresenter: MainMVP.PresenterOps? = null
+    private var mPresenter: BooksMVP.PresenterOps? = null
 
     // views
     @BindView(R.id.booksList)
@@ -46,15 +62,21 @@ class BooksListView : AppCompatActivity(), MainMVP.RequiredViewOps {
         ButterKnife.bind(this)
 
         // TODO fetch books list
+        mPresenter!!.fetchBooks()
         val books = ArrayList<Book>()
-        var book: Book = Book("Myself", "Hello world!")
-        books.add(book)
+        var book: Book = Book("Myself", "Hello world!", Date(), 123)
+//        books.add(book)
 
         val adapter = BooksListAdapter(books, applicationContext)
 
         booksList = findViewById(R.id.booksList)
         booksList.layoutManager = LinearLayoutManager(this)
+        val dividerItemDecoration = DividerItemDecoration(booksList.getContext(),
+                (booksList.layoutManager as LinearLayoutManager).getOrientation())
+        booksList.addItemDecoration(dividerItemDecoration)
         booksList.adapter = adapter
+
+
     }
 
     /**
@@ -65,8 +87,9 @@ class BooksListView : AppCompatActivity(), MainMVP.RequiredViewOps {
     @OnClick(R.id.fabAddBook)
     fun addBookClicked(v: View) {
 
-        //
-
+        // go to page wehre book is added
+        val intent = Intent(this, BookAddView::class.java)
+        this.startActivity(intent)
     }
 
 
@@ -95,8 +118,8 @@ class BooksListView : AppCompatActivity(), MainMVP.RequiredViewOps {
      * Initialize relevant MVP Objects.
      * Creates a Presenter instance, saves the presenter in [StateMaintainer]
      */
-    private fun initialize(view: MainMVP.RequiredViewOps) {
-        mPresenter = MainPresenter(view)
+    private fun initialize(view: BooksMVP.BooksListViewOps) {
+        mPresenter = BooksListPresenter(view)
         mStateMaintainer.put("TODO", mPresenter)
     }
 
@@ -104,8 +127,8 @@ class BooksListView : AppCompatActivity(), MainMVP.RequiredViewOps {
      * Recovers Presenter and informs Presenter that occurred a config change.
      * If Presenter has been lost, recreates a instance
      */
-    private fun reinitialize(view: MainMVP.RequiredViewOps) {
-        mPresenter = mStateMaintainer.get<MainMVP.PresenterOps>("TODO")
+    private fun reinitialize(view: BooksMVP.BooksListViewOps) {
+        mPresenter = mStateMaintainer.get<BooksMVP.PresenterOps>("TODO")
 
         if (mPresenter == null) {
             Log.w(TAG, "recreating Presenter")
@@ -124,6 +147,13 @@ class BooksListView : AppCompatActivity(), MainMVP.RequiredViewOps {
     // Show Toast
     override fun showToast(msg: String) {
         Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // fetch books
+        mPresenter!!.fetchBooks()
     }
 
 

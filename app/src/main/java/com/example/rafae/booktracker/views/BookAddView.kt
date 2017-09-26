@@ -5,27 +5,23 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.StateMaintainer
 import com.example.rafae.booktracker.objects.Book
 import com.example.rafae.booktracker.objects.ReadingSession
-import java.util.*
-import android.widget.LinearLayout
-import android.widget.EditText
-import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.presenters.BooksListPresenter
-import kotlin.collections.ArrayList
+import java.util.*
 
+class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
 
-class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     override fun newBookAdded(books: ArrayList<Book>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Toast.makeText(applicationContext, "Book added", Toast.LENGTH_SHORT).show()
+        this.finish()
     }
 
     /**
@@ -42,13 +38,13 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
 
     // views
     @BindView(R.id.bookTitle)
-    lateinit var bookTitle: TextView
+    lateinit var bookTitle: EditText
     @BindView(R.id.bookAuthor)
-    lateinit var bookAuthor: TextView
-    @BindView(R.id.bookDateAdded)
-    lateinit var bookDateAdded: TextView
-    @BindView(R.id.bookStartReading)
-    lateinit var bookStartReading: Button
+    lateinit var bookAuthor: EditText
+    @BindView(R.id.numPages)
+    lateinit var numPages: EditText
+    @BindView(R.id.addBookBtn)
+    lateinit var addBookBtn: Button
 
 
     lateinit var book: Book
@@ -56,19 +52,9 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         startMVPOps()
-        setContentView(R.layout.books_single_detail)
+        setContentView(R.layout.book_add)
 
         ButterKnife.bind(this)
-
-        // fetch book
-        // get intent
-        val extras = this.intent.getExtras();
-        if (extras == null) {
-            return;
-        }
-        // get data via the key
-        book = extras.getSerializable(BOOK) as Book
-
     }
 
 
@@ -128,25 +114,19 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
         Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
     }
 
-    @OnClick(R.id.bookStartReading)
+    @OnClick(R.id.addBookBtn)
     fun startReadingBook(v: View) {
 
-        val btn = v as Button
+        val author = bookAuthor.text.toString()
+        val title = bookTitle.text.toString()
+        val pages = numPages.text.toString().toInt()
 
-        book.reading = !book.reading
-        if (book.reading) {
-            Log.d("Books", "start reading")
-            //
-            Log.d("Books", book.currentPage.toString())
-            btn.text = "Stop"
+        // read EditText fields
+        // TODO validate
 
-            addReadingSession(book)
-        } else {
-            Log.d("Books", "stopped reading")
-            btn.text = "Start"
-            finishReadingSession(book)
-        }
 
+        // call presenter
+        mPresenter!!.newBook(author, title, pages)
     }
 
     /**
