@@ -1,7 +1,7 @@
 package com.example.rafae.booktracker.daggerExample.module;
 
-import android.app.Activity;
-import android.app.Application;
+import android.arch.lifecycle.LifecycleActivity;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 
 
@@ -23,10 +23,12 @@ import dagger.Provides;
 @Module
 public class VehicleModule {
 
-    private Context mActivity;
+    private final LifecycleOwner lifeCycle;
+    private Context applicationContext;
 
-    public VehicleModule(Context activity) {
-        mActivity = activity;
+    public VehicleModule(Context activity, LifecycleOwner lifeCycle) {
+        applicationContext = activity;
+        this.lifeCycle = lifeCycle;
     }
 
     /**
@@ -50,6 +52,6 @@ public class VehicleModule {
     @Provides
     @Singleton
     Vehicle provideVehicle() {
-        return new Vehicle(new Motor(), mActivity);
+        return new Vehicle(new Motor(), applicationContext, lifeCycle);
     }
 }

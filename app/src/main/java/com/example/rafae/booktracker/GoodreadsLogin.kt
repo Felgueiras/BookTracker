@@ -1,8 +1,6 @@
-package com.example.rafae.booktracker.views
-
+package com.example.rafae.booktracker
 
 import android.arch.lifecycle.LifecycleFragment
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -18,18 +16,15 @@ import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.example.rafae.booktracker.BooksMVP
-import com.example.rafae.booktracker.R
-import com.example.rafae.booktracker.StateMaintainer
 import com.example.rafae.booktracker.daggerExample.DaggerApplication
 import com.example.rafae.booktracker.models.goodreadpsAPI.CallAPI
 import com.example.rafae.booktracker.objects.Book
 import com.example.rafae.booktracker.presenters.BooksListPresenter
+import com.example.rafae.booktracker.views.BookAddView
+import com.example.rafae.booktracker.views.BooksListAdapter
 import java.util.*
-import kotlin.collections.ArrayList
 
-
-class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
+class GoodreadsLogin : LifecycleFragment(), BooksMVP.BooksListViewOps {
 
 
 //    var applicationContext: Context? = null
@@ -176,8 +171,8 @@ class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        fun newInstance(sectionNumber: Int, supportFragmentManager: FragmentManager): BooksListView {
-            val fragment = BooksListView()
+        fun newInstance(sectionNumber: Int, supportFragmentManager: FragmentManager): GoodreadsLogin {
+            val fragment = GoodreadsLogin()
             val args = Bundle()
             args.putInt(ARG_SECTION_NUMBER, sectionNumber)
             fragment.arguments = args

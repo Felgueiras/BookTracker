@@ -1,15 +1,15 @@
 package com.example.rafae.booktracker.daggerExample;
 
-import android.app.Activity;
 import android.app.Application;
+import android.arch.lifecycle.LifecycleActivity;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 
 import com.example.rafae.booktracker.daggerExample.component.DaggerVehicleComponent;
 import com.example.rafae.booktracker.daggerExample.component.VehicleComponent;
 import com.example.rafae.booktracker.daggerExample.module.VehicleModule;
+import com.example.rafae.booktracker.views.BooksListView;
 import com.squareup.leakcanary.LeakCanary;
-
-import javax.inject.Inject;
 
 /**
  * Created by janisharali on 25/12/16.
@@ -27,6 +27,9 @@ import javax.inject.Inject;
 public class DaggerApplication extends Application {
 
     protected static VehicleComponent component;
+
+    static LifecycleOwner lifeCycle;
+    private static DaggerApplication context;
 
     public static DaggerApplication get(Context context) {
         return (DaggerApplication) context.getApplicationContext();
@@ -46,7 +49,16 @@ public class DaggerApplication extends Application {
         LeakCanary.install(this);
         // get application componentac
         component = DaggerVehicleComponent.builder()
-                .vehicleModule(new VehicleModule(this))
+                .vehicleModule(new VehicleModule(this, lifeCycle))
+                .build();
+        context = this;
+    }
+
+    public static void passLifeCycle(LifecycleOwner booksListView){
+        lifeCycle = booksListView;
+
+        component = DaggerVehicleComponent.builder()
+                .vehicleModule(new VehicleModule(context, lifeCycle))
                 .build();
     }
 

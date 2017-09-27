@@ -25,7 +25,7 @@ public interface DaoAccess {
     void insertMultipleListRecord(List<Book> universities);
 
     @Insert
-    void insertOnlySingleRecord(Book university);
+    void insertOnlySingleRecord(Book book);
 
     @Query("SELECT * FROM Book")
     LiveData<List<Book>> fetchAllData();

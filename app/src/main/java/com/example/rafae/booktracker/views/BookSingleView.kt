@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -35,7 +37,7 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
 
     // Responsible to maintain the Objects state
     // during changing configuration
-    private val mStateMaintainer = StateMaintainer(this.fragmentManager, TAG)
+    private val mStateMaintainer = StateMaintainer(fragmentManager, TAG)
 
     // Presenter operations
     private var mPresenter: BooksMVP.PresenterOps? = null
@@ -232,6 +234,27 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
         // new reading session
         readingSess = ReadingSession(current)
     }
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.navigation, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        val id = item.itemId
+
+
+        return if (id == R.id.action_settings) {
+            true
+        } else super.onOptionsItemSelected(item)
+
+    }
+
 
     companion object {
         val BOOK = "BOOK"

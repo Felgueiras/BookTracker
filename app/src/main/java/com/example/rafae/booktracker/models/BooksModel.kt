@@ -4,13 +4,21 @@ package com.example.rafae.booktracker.models
  * Created by rafae on 24/09/2017.
  */
 
+import android.arch.lifecycle.LifecycleActivity
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.Observer
+import android.arch.persistence.room.Room
 import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import android.widget.Toast
 import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.daggerExample.DaggerApplication
+import com.example.rafae.booktracker.daggerExample.Vehicle
 import com.example.rafae.booktracker.objects.Book
+import rx.Single
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import javax.inject.Singleton
 
 
@@ -27,21 +35,25 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
      * -  Holder object & lazy instance is used to ensure only one instance of Singleton is created.
      */
 
-    init { println("This ($this) is a singleton") }
+    init {
+        println("This ($this) is a singleton")
+    }
 
-    private object Holder { val INSTANCE = BooksModel() }
+    private object Holder {
+        val INSTANCE = BooksModel()
+    }
 
     companion object {
         val instance: BooksModel by lazy { Holder.INSTANCE }
     }
 
     // Presenter reference
-    var mPresenter:BooksMVP.RequiredPresenterOps? = null
+    var mPresenter: BooksMVP.RequiredPresenterOps? = null
 
 
 //    private val sampleDatabase: SampleDatabase
 
-    private val context: Context
+    private var context: Context
 
     init {
 
@@ -52,10 +64,10 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
 
         Toast.makeText(context, "SPEED", Toast.LENGTH_SHORT).show()
 
-        // fetch data
-//        DatabaseAsync().execute();
+//        doSomth(vehicle)
 
     }
+
 
     private inner class DatabaseAsync : AsyncTask<Void, Void, Void>() {
 
@@ -71,7 +83,7 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
             book.title = "Booky"
             book.author = "Me!"
 
-            Log.d("Books","fetched data!")
+            Log.d("Books", "fetched data!")
 
             return null
         }
@@ -84,13 +96,37 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
     }
 
 
+    lateinit var sampleDatabase: SampleDatabase
+
+    lateinit var lifecycle: LifecycleOwner
+
     override fun fetchBooks() {
-        mPresenter!!.onBookInserted(booksList)
+        // LiveData code
+        // fetch context
+        val vehicleComponent = DaggerApplication.getComponent()
+        val vehicle = vehicleComponent.provideVehicle()
+        context = vehicle.context
+        lifecycle = vehicle.lifecycle
+
+        // use livedata with room
+        sampleDatabase = Room.databaseBuilder(context,
+                SampleDatabase::class.java, "sample-db").build()
+
+        // LiveData
+        // obeserve() first argument needs to extend LifeCycle (LifeCycleActivity)
+        val booksList = sampleDatabase.daoAccess().fetchAllData()
+        booksList.observe(vehicle.lifecycle, object : Observer<List<Book>> {
+            override fun onChanged(books: List<Book>?) {
+                //Update your UI here.
+                Log.d("Room", "Fetched all data")
+                for (univ in books!!) {
+                    Log.d("Univ", univ.title + "")
+                }
+                mPresenter!!.onBookInserted(books as ArrayList<Book>)
+            }
+        })
     }
 
-
-    // TODO use Room
-    var booksList: ArrayList<Book> = ArrayList()
 
     /**
      * Sent from [MainPresenter.onDestroy]
@@ -105,9 +141,11 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
      * Add a new Book.
      */
     override fun insertBook(book: Book) {
-        // insert book
-        booksList.add(book)
-        mPresenter!!.onBookInserted(booksList)
+        // Live Data
+        Single.fromCallable {
+            sampleDatabase.daoAccess().insertOnlySingleRecord(book)
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
 
     // Removes Note from DB

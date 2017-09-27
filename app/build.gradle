@@ -67,6 +67,14 @@ dependencies {
     // LiveData
     compile "android.arch.lifecycle:runtime:1.0.0"
     compile "android.arch.lifecycle:extensions:1.0.0-alpha9-1"
+
+    // Retrofit & OkHttp
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+
+    // Retrofit XML converter (Simple)
+    compile 'com.squareup.retrofit2:converter-simplexml:2.3.0'
 }
 repositories {
     mavenCentral()

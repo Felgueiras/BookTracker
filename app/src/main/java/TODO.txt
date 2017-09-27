@@ -1,5 +1,5 @@
 - widget
-- add book
+- persistence
 - update book
 - start/ stop
 - average pages speed

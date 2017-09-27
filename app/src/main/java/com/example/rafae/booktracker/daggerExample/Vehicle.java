@@ -1,6 +1,7 @@
 package com.example.rafae.booktracker.daggerExample;
 
-import android.app.Activity;
+import android.arch.lifecycle.LifecycleActivity;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 
 import javax.inject.Inject;
@@ -11,19 +12,21 @@ import javax.inject.Inject;
 
 public class Vehicle {
 
+    private final LifecycleOwner lifecycle;
     private Context context;
     private Motor motor;
 
     /**
      * Fetch dependencies specified in parameters.
-     *
-     * @param motor
+     *  @param motor
      * @param mActivity
+     * @param lifeCycle
      */
     @Inject
-    public Vehicle(Motor motor, Context mActivity) {
+    public Vehicle(Motor motor, Context mActivity, LifecycleOwner lifeCycle) {
         this.motor = motor;
         this.context = mActivity;
+        this.lifecycle = lifeCycle;
     }
 
     public void increaseSpeed(int value) {
@@ -44,5 +47,9 @@ public class Vehicle {
 
     public Motor getMotor() {
         return motor;
+    }
+
+    public LifecycleOwner getLifecycle() {
+        return lifecycle;
     }
 }

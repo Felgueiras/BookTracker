@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.rafae.booktracker">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".daggerExample.DaggerApplication"
         android:allowBackup="true"
@@ -11,17 +13,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".views.BooksListView">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".daggerExample.DaggerActivity">
 
         </activity>
         <activity android:name=".views.BookSingleView" />
         <activity android:name=".views.BookAddView" />
+
         <receiver android:name=".widgets.StartStopReading">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -31,6 +30,17 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/start_stop_reading_info" />
         </receiver>
+
+        <activity
+            android:name=".DrawerActivity"
+            android:label="@string/title_activity_drawer"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

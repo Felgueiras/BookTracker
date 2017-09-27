@@ -31,7 +31,7 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
 
     // Responsible to maintain the Objects state
     // during changing configuration
-    private val mStateMaintainer = StateMaintainer(this.fragmentManager, TAG)
+    private val mStateMaintainer = StateMaintainer(fragmentManager, TAG)
 
     // Presenter operations
     private var mPresenter: BooksMVP.PresenterOps? = null
