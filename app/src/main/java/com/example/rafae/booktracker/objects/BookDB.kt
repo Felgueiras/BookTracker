@@ -10,7 +10,7 @@ import java.util.Date
  * Created by rafae on 25/09/2017.
  */
 @Entity(tableName = "book")
-class Book(author: String, title: String, date: Date, pages: Int) : Serializable {
+class BookDB(author: String, title: String, date: Date, pages: Int) : Serializable {
 
     constructor() : this("", "", Date(), 0)
 
@@ -33,4 +33,6 @@ class Book(author: String, title: String, date: Date, pages: Int) : Serializable
     var reading: Boolean = false
     @Ignore
     var readingSessions: ArrayList<ReadingSession>? = null
+
+
 }

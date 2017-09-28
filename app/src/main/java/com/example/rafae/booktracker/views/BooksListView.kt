@@ -2,7 +2,6 @@ package com.example.rafae.booktracker.views
 
 
 import android.arch.lifecycle.LifecycleFragment
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -23,24 +22,28 @@ import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.StateMaintainer
 import com.example.rafae.booktracker.daggerExample.DaggerApplication
 import com.example.rafae.booktracker.models.goodreadpsAPI.CallAPI
-import com.example.rafae.booktracker.objects.Book
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
+import com.example.rafae.booktracker.objects.BookDB
 import com.example.rafae.booktracker.presenters.BooksListPresenter
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
+    override fun newBookAdded(books: ArrayList<Book>) {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 
 //    var applicationContext: Context? = null
 
-    override fun newBookAdded(books: ArrayList<Book>) {
+    fun newBookAddeda(books: ArrayList<BookDB>) {
         // update recycler view
-        val adapter = BooksListAdapter(books, context)
+//        val adapter = BooksListAdapter(books, context)
 
-        booksList.adapter = adapter
+//        booksList.adapter = adapter
 //        booksList.invalidate()
-        adapter.notifyDataSetChanged()
+//        adapter.notifyDataSetChanged()
     }
 
     /**
@@ -74,22 +77,22 @@ class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
 
         // TODO fetch books list
         mPresenter!!.fetchBooks()
-        val books = ArrayList<Book>()
-        var book: Book = Book("Myself", "Hello world!", Date(), 123)
+        val books = ArrayList<BookDB>()
+        var book: BookDB = BookDB("Myself", "Hello world!", Date(), 123)
 //        books.add(book)
 
-        val adapter = BooksListAdapter(books, activity)
+//        val adapter = BooksListAdapter(books, activity)
 
         booksList = rootView.findViewById(R.id.booksList)
         booksList.layoutManager = LinearLayoutManager(activity)
         val dividerItemDecoration = DividerItemDecoration(booksList.getContext(),
                 (booksList.layoutManager as LinearLayoutManager).getOrientation())
         booksList.addItemDecoration(dividerItemDecoration)
-        booksList.adapter = adapter
+//        booksList.adapter = adapter
 
 
         // TODO just for testing - this goes in the model area
-        CallAPI().call()
+//        CallAPI().call(mPresenter)
 
         return rootView
     }

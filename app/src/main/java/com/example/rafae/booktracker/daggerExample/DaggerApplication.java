@@ -54,11 +54,11 @@ public class DaggerApplication extends Application {
         context = this;
     }
 
-    public static void passLifeCycle(LifecycleOwner booksListView){
-        lifeCycle = booksListView;
+    public static void passLifeCycle(LifecycleOwner lifeCycle){
+        DaggerApplication.lifeCycle = lifeCycle;
 
         component = DaggerVehicleComponent.builder()
-                .vehicleModule(new VehicleModule(context, lifeCycle))
+                .vehicleModule(new VehicleModule(context, DaggerApplication.lifeCycle))
                 .build();
     }
 

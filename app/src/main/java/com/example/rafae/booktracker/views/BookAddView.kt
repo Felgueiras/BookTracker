@@ -12,15 +12,20 @@ import butterknife.OnClick
 import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.StateMaintainer
-import com.example.rafae.booktracker.objects.Book
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
+import com.example.rafae.booktracker.objects.BookDB
 import com.example.rafae.booktracker.objects.ReadingSession
 import com.example.rafae.booktracker.presenters.BooksListPresenter
 import java.util.*
+import kotlin.collections.ArrayList
 
 class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
-
     override fun newBookAdded(books: ArrayList<Book>) {
-        Toast.makeText(applicationContext, "Book added", Toast.LENGTH_SHORT).show()
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun newBookAddeda(books: ArrayList<BookDB>) {
+        Toast.makeText(applicationContext, "BookDB added", Toast.LENGTH_SHORT).show()
         this.finish()
     }
 
@@ -47,7 +52,7 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     lateinit var addBookBtn: Button
 
 
-    lateinit var book: Book
+    lateinit var book: BookDB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,7 +137,7 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     /**
      * Finish reading session.
      */
-    private fun finishReadingSession(book: Book) {
+    private fun finishReadingSession(book: BookDB) {
         // get current time
         val current = Date()
 
@@ -205,7 +210,7 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     /**
      * Start reading session.
      */
-    private fun addReadingSession(book: Book) {
+    private fun addReadingSession(book: BookDB) {
         // get current time
         val current = Date()
 

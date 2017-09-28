@@ -1,6 +1,10 @@
 package com.example.rafae.booktracker.models.goodreadpsAPI
 
 import android.util.Log
+import com.example.rafae.booktracker.BooksMVP
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Review
+import com.example.rafae.booktracker.objects.BookDB
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -12,6 +16,7 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 /**
  * Created by felguiras on 26/09/2017.
  */
+// TODO make singleton
 class CallAPI {
 
     enum class CALL_RETURN {
@@ -20,7 +25,7 @@ class CallAPI {
 
     val API_BASE_URL = "https://www.goodreads.com"
 
-    fun call() {
+    fun call(mPresenter: BooksMVP.RequiredPresenterOps?) {
         val callType: CALL_RETURN = CALL_RETURN.XML
         val retrofit: Retrofit
 
@@ -48,20 +53,17 @@ class CallAPI {
                         .build()
             }
         }
-//        makeTheCall(retrofit)
 
 
         // call login
-        makeTheCall(retrofit)
-
-
+        makeTheCall(retrofit, mPresenter)
     }
 
 
     /**
      * Call Goodreads API.
      */
-    private fun makeTheCall(retrofit: Retrofit) {
+    private fun makeTheCall(retrofit: Retrofit, mPresenter: BooksMVP.RequiredPresenterOps?) {
         // Create a very simple REST adapter which points the GitHub API endpoint.
         val client = retrofit.create(GoodReadsRESTClient::class.java)
 
@@ -78,12 +80,22 @@ class CallAPI {
                 // The network call was a success and we got a response
 
                 Log.d("REST", "fetched response")
-
-
                 val resp = response.body()
-//                if (resp != null) {
-//                    Log.d("Author", resp.author!!.name)
-//                }
+
+                // get reviews/books on this shelf
+                val reviews: List<Review> = resp!!.reviews
+
+                val books:MutableList<Book> = mutableListOf<Book>()
+
+                // iterate over reviews
+                for (review: Review in reviews) {
+                    // get book
+                    val book: Book = review.book
+                    Log.d("Book",book.title)
+                    books.add(book)
+                }
+
+                mPresenter!!.onBookInserted(books as ArrayList<Book>)
 
 
 

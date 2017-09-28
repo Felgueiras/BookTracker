@@ -1,7 +1,7 @@
 package com.example.rafae.booktracker
 
 import com.example.rafae.booktracker.models.Note
-import com.example.rafae.booktracker.objects.Book
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 
 /**
  * Created by rafae on 24/09/2017.

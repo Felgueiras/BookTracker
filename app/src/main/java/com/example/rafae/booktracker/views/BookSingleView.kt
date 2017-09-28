@@ -1,6 +1,13 @@
 package com.example.rafae.booktracker.views
 
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.NotificationCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -15,18 +22,23 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.StateMaintainer
-import com.example.rafae.booktracker.objects.Book
+import com.example.rafae.booktracker.objects.BookDB
 import com.example.rafae.booktracker.objects.ReadingSession
 import java.util.*
 import android.widget.LinearLayout
 import android.widget.EditText
 import com.example.rafae.booktracker.BooksMVP
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import com.example.rafae.booktracker.presenters.BooksListPresenter
 import kotlin.collections.ArrayList
 
 
 class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     override fun newBookAdded(books: ArrayList<Book>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun newBookAddeda(books: ArrayList<BookDB>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -49,11 +61,11 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     lateinit var bookAuthor: TextView
     @BindView(R.id.bookDateAdded)
     lateinit var bookDateAdded: TextView
-    @BindView(R.id.bookStartReading)
-    lateinit var bookStartReading: Button
+//    @BindView(R.id.bookStartReading)
+//    lateinit var bookStartReading: Button
 
 
-    lateinit var book: Book
+    lateinit var book: BookDB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +81,7 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
             return;
         }
         // get data via the key
-        book = extras.getSerializable(BOOK) as Book
+        book = extras.getSerializable(BOOK) as BookDB
 
     }
 
@@ -130,31 +142,111 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
         Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
     }
 
-    @OnClick(R.id.bookStartReading)
-    fun startReadingBook(v: View) {
+//    @OnClick(R.id.bookStartReading)
+//    fun startReadingBook(v: View) {
+//
+//        val btn = v as Button
+//
+//        book.reading = !book.reading
+//        if (book.reading) {
+//            Log.d("Books", "start reading")
+//            //
+//            Log.d("Books", book.currentPage.toString())
+//            btn.text = "Stop"
+//
+//            addReadingSession(book)
+//        } else {
+//            Log.d("Books", "stopped reading")
+//            btn.text = "Start"
+//            finishReadingSession(book)
+//        }
+//
+//        // TODO notification
+//
+//
+//    }
 
-        val btn = v as Button
+    private val NOTIFICATION_ID: Int = 1
 
-        book.reading = !book.reading
-        if (book.reading) {
-            Log.d("Books", "start reading")
-            //
-            Log.d("Books", book.currentPage.toString())
-            btn.text = "Stop"
+    fun sendNotification(view: View) {
 
-            addReadingSession(book)
-        } else {
-            Log.d("Books", "stopped reading")
-            btn.text = "Start"
-            finishReadingSession(book)
-        }
+        // BEGIN_INCLUDE(build_action)
+        /** Create an intent that will be fired when the user clicks the notification.
+         * The intent needs to be packaged into a [android.app.PendingIntent] so that the
+         * notification service can fire it on our behalf.
+         */
+        val intent = Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://developer.android.com/reference/android/app/Notification.html"))
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+        // END_INCLUDE(build_action)
 
+        // BEGIN_INCLUDE (build_notification)
+        /**
+         * Use NotificationCompat.Builder to set up our notification.
+         */
+        val builder = NotificationCompat.Builder(this)
+
+        /** Set the icon that will appear in the notification bar. This icon also appears
+         * in the lower right hand corner of the notification itself.
+         *
+         * Important note: although you can use any drawable as the small icon, Android
+         * design guidelines state that the icon should be simple and monochrome. Full-color
+         * bitmaps or busy images don't render well on smaller screens and can end up
+         * confusing the user.
+         */
+        builder.setSmallIcon(R.drawable.ic_stat_notification)
+
+        // Set the intent that will fire when the user taps the notification.
+        builder.setContentIntent(pendingIntent)
+
+        // Set the notification to auto-cancel. This means that the notification will disappear
+        // after the user taps it, rather than remaining until it's explicitly dismissed.
+        builder.setAutoCancel(true)
+
+
+        /**
+         * Build the notification's appearance.
+         * Set the large icon, which appears on the left of the notification. In this
+         * sample we'll set the large icon to be the same as our app icon. The app icon is a
+         * reasonable default if you don't have anything more compelling to use as an icon.
+         */
+        builder.setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.notification_tile_bg))
+
+        /**
+         * Set the text of the notification. This sample sets the three most commononly used
+         * text areas:
+         * 1. The content title, which appears in large type at the top of the notification
+         * 2. The content text, which appears in smaller text below the title
+         * 3. The subtext, which appears under the text on newer devices. Devices running
+         * versions of Android prior to 4.2 will ignore this field, so don't use it for
+         * anything vital!
+         */
+        builder.setContentTitle("BasicNotifications Sample")
+        builder.setContentText("Time to learn about notifications!")
+        builder.setSubText("Tap to view documentation about notifications.")
+
+
+        /**
+         * Add actions.
+         */
+        builder.addAction(R.drawable.ic_stat_notification, "CLICK", pendingIntent)
+
+        // END_INCLUDE (build_notification)
+
+        // BEGIN_INCLUDE(send_notification)
+        /**
+         * Send the notification. This will immediately display the notification icon in the
+         * notification bar.
+         */
+        val notificationManager = getSystemService(
+                Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
+        // END_INCLUDE(send_notification)
     }
-
     /**
      * Finish reading session.
      */
-    private fun finishReadingSession(book: Book) {
+    private fun finishReadingSession(book: BookDB) {
         // get current time
         val current = Date()
 
@@ -227,7 +319,7 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     /**
      * Start reading session.
      */
-    private fun addReadingSession(book: Book) {
+    private fun addReadingSession(book: BookDB) {
         // get current time
         val current = Date()
 

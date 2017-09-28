@@ -75,6 +75,9 @@ dependencies {
 
     // Retrofit XML converter (Simple)
     compile 'com.squareup.retrofit2:converter-simplexml:2.3.0'
+
+    // EventBus
+    compile 'org.greenrobot:eventbus:3.0.0'
 }
 repositories {
     mavenCentral()

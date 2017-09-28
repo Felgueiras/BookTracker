@@ -1,5 +1,5 @@
+- display books currently reading!
 - widget
-- persistence
 - update book
 - start/ stop
 - average pages speed

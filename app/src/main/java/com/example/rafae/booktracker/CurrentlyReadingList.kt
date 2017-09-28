@@ -18,13 +18,13 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.example.rafae.booktracker.daggerExample.DaggerApplication
 import com.example.rafae.booktracker.models.goodreadpsAPI.CallAPI
-import com.example.rafae.booktracker.objects.Book
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import com.example.rafae.booktracker.presenters.BooksListPresenter
 import com.example.rafae.booktracker.views.BookAddView
 import com.example.rafae.booktracker.views.BooksListAdapter
 import java.util.*
 
-class GoodreadsLogin : LifecycleFragment(), BooksMVP.BooksListViewOps {
+class CurrentlyReadingList : LifecycleFragment(), BooksMVP.BooksListViewOps {
 
 
 //    var applicationContext: Context? = null
@@ -67,24 +67,15 @@ class GoodreadsLogin : LifecycleFragment(), BooksMVP.BooksListViewOps {
         // pass lifecycle
         DaggerApplication.passLifeCycle(this)
 
-        // TODO fetch books list
-        mPresenter!!.fetchBooks()
-        val books = ArrayList<Book>()
-        var book: Book = Book("Myself", "Hello world!", Date(), 123)
-//        books.add(book)
-
-        val adapter = BooksListAdapter(books, activity)
-
         booksList = rootView.findViewById(R.id.booksList)
         booksList.layoutManager = LinearLayoutManager(activity)
         val dividerItemDecoration = DividerItemDecoration(booksList.getContext(),
                 (booksList.layoutManager as LinearLayoutManager).getOrientation())
         booksList.addItemDecoration(dividerItemDecoration)
-        booksList.adapter = adapter
 
+        // get books from GoodReads
+        mPresenter!!.fetchBooks()
 
-        // TODO just for testing - this goes in the model area
-        CallAPI().call()
 
         return rootView
     }
@@ -128,6 +119,7 @@ class GoodreadsLogin : LifecycleFragment(), BooksMVP.BooksListViewOps {
     private fun initialize(view: BooksMVP.BooksListViewOps) {
         mPresenter = BooksListPresenter(view)
 //        mStateMaintainer.put("TODO", mPresenter)
+
     }
 
     /**
@@ -171,8 +163,8 @@ class GoodreadsLogin : LifecycleFragment(), BooksMVP.BooksListViewOps {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        fun newInstance(sectionNumber: Int, supportFragmentManager: FragmentManager): GoodreadsLogin {
-            val fragment = GoodreadsLogin()
+        fun newInstance(sectionNumber: Int, supportFragmentManager: FragmentManager): CurrentlyReadingList {
+            val fragment = CurrentlyReadingList()
             val args = Bundle()
             args.putInt(ARG_SECTION_NUMBER, sectionNumber)
             fragment.arguments = args

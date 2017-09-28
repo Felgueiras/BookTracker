@@ -1,19 +1,32 @@
 package com.example.rafae.booktracker
 
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
+import android.support.v4.app.NotificationCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.example.android.notificationchannels.MainActivity
+import com.example.android.notificationchannels.NotificationHelper
 import com.example.rafae.booktracker.views.BooksListView
+import com.example.rafae.booktracker.views.NotifTest
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.app_bar_drawer.*
 
 class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
@@ -36,7 +49,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         var endFragment: Fragment? = null
 
 
-        endFragment = GoodreadsLogin.Companion.newInstance(1, supportFragmentManager) as Fragment
+        endFragment = NotifTest.Companion.newInstance(1, supportFragmentManager) as Fragment
 
 
         var fragmentManager = getSupportFragmentManager()
@@ -44,6 +57,11 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 .replace(R.id.current_fragment, endFragment, "initial_tag")
                 .commit();
     }
+
+
+
+
+
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -77,8 +95,11 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.goodreadsBooks -> {
                 endFragment = BooksListView.Companion.newInstance(1, supportFragmentManager) as Fragment
             }
-            R.id.goodreadsLogin -> {
-                endFragment = GoodreadsLogin.Companion.newInstance(1, supportFragmentManager) as Fragment
+            R.id.currentlyReading -> {
+                endFragment = CurrentlyReadingList.Companion.newInstance(1, supportFragmentManager) as Fragment
+            }
+            R.id.notifTest -> {
+                endFragment = NotifTest.Companion.newInstance(1, supportFragmentManager) as Fragment
             }
             R.id.spotify -> {
 

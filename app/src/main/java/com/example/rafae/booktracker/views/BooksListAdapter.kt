@@ -14,7 +14,7 @@ import java.util.ArrayList
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.rafae.booktracker.R
-import com.example.rafae.booktracker.objects.Book
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 
 /**
  * Created by felguiras on 15/09/2017.
@@ -47,6 +47,8 @@ internal class BooksListAdapter(private val books: ArrayList<Book>, private val 
         @BindView(R.id.bookAuthor)
         lateinit var author: TextView
         lateinit var completion: TextView
+        lateinit var avgRating: TextView
+        lateinit var pubYear: TextView
 
         init {
             ButterKnife.bind(this, view)
@@ -54,6 +56,8 @@ internal class BooksListAdapter(private val books: ArrayList<Book>, private val 
             title = view.findViewById(R.id.bookTitle)
             author = view.findViewById(R.id.bookAuthor)
             completion = view.findViewById(R.id.bookCompletion)
+            avgRating = view.findViewById(R.id.avgRating)
+            pubYear = view.findViewById(R.id.pubYear)
 
             view.setOnClickListener {
                 val intent = Intent(context, BookSingleView::class.java)
@@ -66,11 +70,14 @@ internal class BooksListAdapter(private val books: ArrayList<Book>, private val 
 
         fun bindBook(bk: Book) {
             title.text = bk.title
-            author.text = bk.author
+            author.text = "by "+bk.authors[0].name
             // TODO get book completion
             val completionVal:Int = 50
             completion.text = """${completionVal.toString()}%"""
-            this.book = bk
+            // rating - number ratings
+            avgRating.text = bk.avgRating.toString()
+            // pub year
+            pubYear.text = bk.pubYear
 
 
         }

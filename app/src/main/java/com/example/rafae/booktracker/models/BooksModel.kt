@@ -4,7 +4,6 @@ package com.example.rafae.booktracker.models
  * Created by rafae on 24/09/2017.
  */
 
-import android.arch.lifecycle.LifecycleActivity
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.arch.persistence.room.Room
@@ -14,8 +13,8 @@ import android.util.Log
 import android.widget.Toast
 import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.daggerExample.DaggerApplication
-import com.example.rafae.booktracker.daggerExample.Vehicle
-import com.example.rafae.booktracker.objects.Book
+import com.example.rafae.booktracker.models.goodreadpsAPI.CallAPI
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -79,9 +78,9 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
 
         override fun doInBackground(vararg voids: Void): Void? {
             //Let's add some dummy data to the database.
-            val book = Book()
-            book.title = "Booky"
-            book.author = "Me!"
+//            val book = Book()
+//            book.title = "Booky"
+//            book.author = "Me!"
 
             Log.d("Books", "fetched data!")
 
@@ -100,7 +99,24 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
 
     lateinit var lifecycle: LifecycleOwner
 
+    /**
+     * Fetch books from GoodReads.
+     */
     override fun fetchBooks() {
+        // LiveData code
+        // fetch context
+        val vehicleComponent = DaggerApplication.getComponent()
+        val vehicle = vehicleComponent.provideVehicle()
+        context = vehicle.context
+        lifecycle = vehicle.lifecycle
+
+        CallAPI().call(mPresenter)
+
+
+    }
+
+
+    fun fetchBooksRoom() {
         // LiveData code
         // fetch context
         val vehicleComponent = DaggerApplication.getComponent()
@@ -114,19 +130,22 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
 
         // LiveData
         // obeserve() first argument needs to extend LifeCycle (LifeCycleActivity)
-        val booksList = sampleDatabase.daoAccess().fetchAllData()
-        booksList.observe(vehicle.lifecycle, object : Observer<List<Book>> {
-            override fun onChanged(books: List<Book>?) {
-                //Update your UI here.
-                Log.d("Room", "Fetched all data")
-                for (univ in books!!) {
-                    Log.d("Univ", univ.title + "")
-                }
-                mPresenter!!.onBookInserted(books as ArrayList<Book>)
-            }
-        })
-    }
+//        val booksList = sampleDatabase.daoAccess().fetchAllData()
+//        booksList.observe(vehicle.lifecycle, object : Observer<List<BookDB>> {
+//            override fun onChanged(books: List<BookDB>?) {
+//                //Update your UI here.
+//                Log.d("Room", "Fetched all data")
+//                for (univ in books!!) {
+//                    Log.d("Univ", univ.title + "")
+//                }
+//                mPresenter!!.onBookInserted(books as ArrayList<BookDB>)
+//            }
+//        })
 
+        /**
+         * CallAPI().call()
+         */
+    }
 
     /**
      * Sent from [MainPresenter.onDestroy]
@@ -138,14 +157,14 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
     }
 
     /**
-     * Add a new Book.
+     * Add a new BookDB.
      */
     override fun insertBook(book: Book) {
         // Live Data
-        Single.fromCallable {
-            sampleDatabase.daoAccess().insertOnlySingleRecord(book)
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe()
+//        Single.fromCallable {
+//            sampleDatabase.daoAccess().insertOnlySingleRecord(book)
+//        }.subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
 
     // Removes Note from DB

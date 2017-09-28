@@ -7,7 +7,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.example.rafae.booktracker.objects.Book;
+import com.example.rafae.booktracker.objects.BookDB;
 
 import java.util.List;
 
@@ -19,23 +19,23 @@ import java.util.List;
 public interface DaoAccess {
 
     @Insert
-    void insertMultipleRecord(Book... books);
+    void insertMultipleRecord(BookDB... books);
 
     @Insert
-    void insertMultipleListRecord(List<Book> universities);
+    void insertMultipleListRecord(List<BookDB> universities);
 
     @Insert
-    void insertOnlySingleRecord(Book book);
+    void insertOnlySingleRecord(BookDB book);
 
     @Query("SELECT * FROM Book")
-    LiveData<List<Book>> fetchAllData();
+    LiveData<List<BookDB>> fetchAllData();
 
-//    @Query("SELECT * FROM Book WHERE clgid =:college_id")
-//    LiveData<Book> getSingleRecord(int college_id);
+//    @Query("SELECT * FROM BookDB WHERE clgid =:college_id")
+//    LiveData<BookDB> getSingleRecord(int college_id);
 
     @Update
-    void updateRecord(Book university);
+    void updateRecord(BookDB university);
 
     @Delete
-    void deleteRecord(Book university);
+    void deleteRecord(BookDB university);
 }

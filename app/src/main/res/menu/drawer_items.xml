@@ -9,13 +9,17 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="Goodreads" />
         <item
-            android:id="@+id/goodreadsLogin"
+            android:id="@+id/currentlyReading"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Login to Goodreads" />
+            android:title="Currently reading" />
         <item
             android:id="@+id/spotify"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Spotify" />
+        <item
+            android:id="@+id/notifTest"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Notif Test" />
     </group>
 
     <item android:title="Communicate">

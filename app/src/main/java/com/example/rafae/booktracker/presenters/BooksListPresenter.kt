@@ -3,7 +3,8 @@ package com.example.rafae.booktracker.presenters
 import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.models.BooksModel
 import com.example.rafae.booktracker.models.Note
-import com.example.rafae.booktracker.objects.Book
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
+//import com.example.rafae.booktracker.objects.BookDB
 import com.example.rafae.booktracker.views.BooksListView
 
 import java.lang.ref.WeakReference
@@ -60,8 +61,8 @@ class BooksListPresenter(mView: BooksMVP.BooksListViewOps) : BooksMVP.RequiredPr
      * creates a new Note and sends it to the model.
      */
     override fun newBook(author: String, title: String, pages: Int) {
-        val book =  Book(author, title, getDate(), pages)
-        mModel.insertBook(book)
+//        val book =  Book(author, title, getDate(), pages)
+//        mModel.insertBook(book)
     }
 
     /**
