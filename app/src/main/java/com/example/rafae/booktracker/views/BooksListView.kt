@@ -5,7 +5,6 @@ import android.arch.lifecycle.LifecycleFragment
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.FragmentManager
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -21,29 +20,27 @@ import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.StateMaintainer
 import com.example.rafae.booktracker.daggerExample.DaggerApplication
-import com.example.rafae.booktracker.models.goodreadpsAPI.CallAPI
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import com.example.rafae.booktracker.objects.BookDB
-import com.example.rafae.booktracker.presenters.BooksListPresenter
+import com.example.rafae.booktracker.presenters.ShelfPresenter
+import com.example.rafae.booktracker.views.Shelf.ShelfViewAdapter
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
-    override fun newBookAdded(books: ArrayList<Book>) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+
 
 
 //    var applicationContext: Context? = null
 
-    fun newBookAddeda(books: ArrayList<BookDB>) {
-        // update recycler view
-//        val adapter = BooksListAdapter(books, context)
+    override fun newBookAdded(books: ArrayList<Book>) {
+//         update recycler view
+        val adapter = ShelfViewAdapter(books, context)
 
-//        booksList.adapter = adapter
-//        booksList.invalidate()
-//        adapter.notifyDataSetChanged()
+        booksList.adapter = adapter
+        booksList.invalidate()
+        adapter.notifyDataSetChanged()
     }
 
     /**
@@ -75,13 +72,12 @@ class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
         // pass lifecycle
         DaggerApplication.passLifeCycle(this)
 
-        // TODO fetch books list
-        mPresenter!!.fetchBooks()
+//        mPresenter!!.fetchBooks(shelf)
         val books = ArrayList<BookDB>()
         var book: BookDB = BookDB("Myself", "Hello world!", Date(), 123)
 //        books.add(book)
 
-//        val adapter = BooksListAdapter(books, activity)
+//        val adapter = ShelfViewAdapter(books, activity)
 
         booksList = rootView.findViewById(R.id.booksList)
         booksList.layoutManager = LinearLayoutManager(activity)
@@ -89,10 +85,6 @@ class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
                 (booksList.layoutManager as LinearLayoutManager).getOrientation())
         booksList.addItemDecoration(dividerItemDecoration)
 //        booksList.adapter = adapter
-
-
-        // TODO just for testing - this goes in the model area
-//        CallAPI().call(mPresenter)
 
         return rootView
     }
@@ -106,7 +98,7 @@ class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
     @OnClick(R.id.fabAddBook)
     fun addBookClicked(v: View) {
 
-        // go to page wehre book is added
+        // go to elapsedTime wehre book is added
         val intent = Intent(activity, BookAddView::class.java)
         this.startActivity(intent)
     }
@@ -134,7 +126,7 @@ class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
      * Creates a Presenter instance, saves the presenter in [StateMaintainer]
      */
     private fun initialize(view: BooksMVP.BooksListViewOps) {
-        mPresenter = BooksListPresenter(view)
+        mPresenter = ShelfPresenter(view)
 //        mStateMaintainer.put("TODO", mPresenter)
     }
 
@@ -168,7 +160,7 @@ class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
         super.onResume()
 
         // fetch books
-        mPresenter!!.fetchBooks()
+//        mPresenter!!.fetchBooks(shelf)
     }
 
     companion object {
@@ -179,7 +171,7 @@ class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        fun newInstance(sectionNumber: Int, supportFragmentManager: FragmentManager): BooksListView {
+        fun newInstance(sectionNumber: Int): BooksListView {
             val fragment = BooksListView()
             val args = Bundle()
             args.putInt(ARG_SECTION_NUMBER, sectionNumber)

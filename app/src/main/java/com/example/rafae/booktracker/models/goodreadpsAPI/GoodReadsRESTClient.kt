@@ -14,7 +14,7 @@ interface GoodReadsRESTClient {
     //    @FormUrlEncoded
 //    @POST("/todo/api/v1.0/tasks")
 //    fun addTask(
-//            @Body title: TaskREST
+//            @Body elapsedTime: TaskREST
 //    ): Call<TaskREST>
 
     @GET("/search.xml")
@@ -30,10 +30,26 @@ interface GoodReadsRESTClient {
     ): Call<GoodReadResponse>
 
     @GET("/review/list/46472494.xml")
-    fun currentlyReading(
+    fun booksFromShelf(
             @Query("key") apiKey: String = "jqBqcyAQtVgqohUmiHyA",
             @Query("v") v: Int = 2,
             @Query("shelf") shelf: String = "currently-reading"
+    ): Call<GoodReadResponse>
+
+    @GET("/user/show/46472494.xml")
+    fun getMemberInfo(
+            @Query("key") apiKey: String = "jqBqcyAQtVgqohUmiHyA"
+    ): Call<GoodReadResponse>
+
+    @GET("/user_status/show/145948935?format=xml")
+    fun getStatusInfo(
+            @Query("key") apiKey: String = "jqBqcyAQtVgqohUmiHyA"
+    ): Call<GoodReadResponse>
+
+    @POST("/user_status.xml")
+    fun updateUserStatus(
+            @Query("book_id") bookId: String = "565058",
+            @Query("elapsedTime") page: Int = 100
     ): Call<GoodReadResponse>
 
     @GET("/oauth/authorize")

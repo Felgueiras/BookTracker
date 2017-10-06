@@ -21,7 +21,10 @@ class BookStopwatchService : Service() {
     var startTime: Long = 0
     var stopTime: Long = 0
     private var running = false
+    // elapsed seconds since started to read
     var counter = 0
+
+    var bookName:String? = null
 
     val wordList: List<String> get() = resultList
 
@@ -63,7 +66,7 @@ class BookStopwatchService : Service() {
                         // launch notification
                         mNotificationHelper = NotificationHelper(applicationContext)
                         mNotificationHelper.notify(MainActivity.NOTIFICATION_FOLLOW, mNotificationHelper.getNotificationElapsedTime(
-                                counter.toString() + " s",
+                                "Reading "+bookName,
                                 counter.toString() + " s"))
 
                         // launch Event

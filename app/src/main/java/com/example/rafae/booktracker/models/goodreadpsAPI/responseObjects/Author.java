@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by felguiras on 27/09/2017.
  */
 
-@Root(name = "author", strict = false)
+@Root(name = "stopPage", strict = false)
 public class Author implements Serializable {
 
     @Element(name = "name")
@@ -30,5 +30,7 @@ public class Author implements Serializable {
         return name;
     }
 
-
+    public void setName(String name) {
+        this.name = name;
+    }
 }

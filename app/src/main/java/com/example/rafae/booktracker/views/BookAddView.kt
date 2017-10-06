@@ -14,12 +14,14 @@ import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.StateMaintainer
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import com.example.rafae.booktracker.objects.BookDB
-import com.example.rafae.booktracker.objects.ReadingSession
-import com.example.rafae.booktracker.presenters.BooksListPresenter
+import com.example.rafae.booktracker.objects.ReadingSessionDB
+import com.example.rafae.booktracker.presenters.ShelfPresenter
 import java.util.*
 import kotlin.collections.ArrayList
 
 class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
+
+
     override fun newBookAdded(books: ArrayList<Book>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -42,9 +44,9 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     private var mPresenter: BooksMVP.PresenterOps? = null
 
     // views
-    @BindView(R.id.bookTitle)
+    @BindView(R.id.statusPage)
     lateinit var bookTitle: EditText
-    @BindView(R.id.bookAuthor)
+    @BindView(R.id.statusDate)
     lateinit var bookAuthor: EditText
     @BindView(R.id.numPages)
     lateinit var numPages: EditText
@@ -89,7 +91,7 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
      * Creates a Presenter instance, saves the presenter in [StateMaintainer]
      */
     private fun initialize(view: BooksMVP.BooksListViewOps) {
-        mPresenter = BooksListPresenter(view)
+        mPresenter = ShelfPresenter(view)
         mStateMaintainer.put("TODO", mPresenter)
     }
 
@@ -147,7 +149,7 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
         // prompt how many pages were read
         val alertDialog = AlertDialog.Builder(this)
         alertDialog.setTitle("Hey man, nice reading!")
-        alertDialog.setMessage("In which page are you?")
+        alertDialog.setMessage("In which elapsedTime are you?")
 
 
         val input = EditText(this)
@@ -180,10 +182,10 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     }
 
     private fun showInfoOnScreen(currentP: Int) {
-        // show info - time (start, stop, elapsed), pages read, reading percentage
+        // show info - time (start, stop, elapsed), pages read, reading pagesInfo
         book.currentPage += currentP
 
-        Log.d("Current page", book.currentPage.toString())
+        Log.d("Current elapsedTime", book.currentPage.toString())
 
 
 // check elapsed time
@@ -191,7 +193,7 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
 // prompt user about how many pages were read
 
 
-        val diff: Long = readingSess!!.stop!!.time - readingSess!!.start!!.time
+        val diff: Long = readingSess!!.stop!!.time - readingSess!!.startTime!!.time
         val diffSeconds = diff / 1000 % 60
         val diffMinutes = diff / (60 * 1000) % 60
         val diffHours = diff / (60 * 60 * 1000)
@@ -205,7 +207,7 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     }
 
 
-    var readingSess: ReadingSession? = null
+    var readingSess: ReadingSessionDB? = null
 
     /**
      * Start reading session.
@@ -215,7 +217,7 @@ class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
         val current = Date()
 
         // new reading session
-        readingSess = ReadingSession(current)
+//        readingSess = ReadingSessionDB(current)
     }
 
     companion object {

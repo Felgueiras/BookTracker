@@ -1,28 +1,27 @@
 package com.example.rafae.booktracker
 
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.graphics.BitmapFactory
-import android.net.Uri
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
-import android.support.v4.app.NotificationCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import com.example.android.notificationchannels.MainActivity
-import com.example.android.notificationchannels.NotificationHelper
 import com.example.rafae.booktracker.views.BooksListView
-import com.example.rafae.booktracker.views.NotifTest
+import com.example.rafae.booktracker.views.Shelf.ShelfView
+import com.example.rafae.booktracker.views.Shelf.ShelfView.Companion.SHELF_READING
+import com.example.rafae.booktracker.views.BookDetail.BookDetailView
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.app_bar_drawer.*
+import com.zhaoxiaodan.miband.MiBand
+
 
 class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -49,21 +48,44 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         var endFragment: Fragment? = null
 
 
-        endFragment = NotifTest.Companion.newInstance(1, supportFragmentManager) as Fragment
+        endFragment = ShelfView.Companion.newInstance(1, SHELF_READING) as Fragment
 
 
         var fragmentManager = getSupportFragmentManager()
         fragmentManager.beginTransaction()
                 .replace(R.id.current_fragment, endFragment, "initial_tag")
-                .commit();
+                .commit()
+
+
+        // Mi Band interaction
+        miBandStuff()
+    }
+
+    private fun miBandStuff() {
+
+
+        val miband = MiBand(this)
+
+        val scanCallback = object : ScanCallback() {
+            override fun onScanResult(callbackType: Int, result: ScanResult?) {
+                val device = result!!.device
+                Log.d("Device", device.name)
+                // 根据情况展示
+            }
+        }
+
+        MiBand.startScan(scanCallback)
+
+
     }
 
 
-
-
-
-
     override fun onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack()
+            return
+        }
+
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
@@ -93,13 +115,13 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         when (item.itemId) {
             R.id.goodreadsBooks -> {
-                endFragment = BooksListView.Companion.newInstance(1, supportFragmentManager) as Fragment
+                endFragment = BooksListView.Companion.newInstance(1) as Fragment
             }
             R.id.currentlyReading -> {
-                endFragment = CurrentlyReadingList.Companion.newInstance(1, supportFragmentManager) as Fragment
+                endFragment = ShelfView.Companion.newInstance(1, ShelfView.SHELF_READING) as Fragment
             }
             R.id.notifTest -> {
-                endFragment = NotifTest.Companion.newInstance(1, supportFragmentManager) as Fragment
+                endFragment = BookDetailView.Companion.newInstance(1, null) as Fragment
             }
             R.id.spotify -> {
 

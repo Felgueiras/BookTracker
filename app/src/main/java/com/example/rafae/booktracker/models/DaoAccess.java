@@ -7,7 +7,9 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.example.rafae.booktracker.objects.BookDB;
+import com.example.rafae.booktracker.models.goodreadpsAPI.UserStatus;
+import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book;
+import com.example.rafae.booktracker.objects.ReadingSessionDB;
 
 import java.util.List;
 
@@ -18,24 +20,42 @@ import java.util.List;
 @Dao
 public interface DaoAccess {
 
-    @Insert
-    void insertMultipleRecord(BookDB... books);
+//    @Insert
+//    void insertMultipleRecord(BookDB... books);
 
     @Insert
-    void insertMultipleListRecord(List<BookDB> universities);
+    void insertMultipleListRecord(List<UserStatus> statuses);
 
     @Insert
-    void insertOnlySingleRecord(BookDB book);
+    void insertOnlySingleRecord(UserStatus status);
 
-    @Query("SELECT * FROM Book")
-    LiveData<List<BookDB>> fetchAllData();
+    @Query("SELECT * FROM user_status")
+    LiveData<List<UserStatus>> fetchAllData();
 
-//    @Query("SELECT * FROM BookDB WHERE clgid =:college_id")
-//    LiveData<BookDB> getSingleRecord(int college_id);
+    @Query("SELECT * FROM user_status WHERE user_status_id =:statusID")
+    LiveData<UserStatus> getSingleRecord(int statusID);
+
+//    @Query("SELECT * FROM user_status WHERE book_id =:statusID")
+//    LiveData<UserStatus> getStatusForBook(Book book);
 
     @Update
-    void updateRecord(BookDB university);
+    void updateRecord(UserStatus university);
 
     @Delete
-    void deleteRecord(BookDB university);
+    void deleteRecord(UserStatus university);
+
+
+    // Reading Sessions
+
+    @Insert
+    void insertReadingSession(ReadingSessionDB sess);
+
+    @Query("SELECT * FROM reading_session")
+    LiveData<List<ReadingSessionDB>> fetchAllReadingSessions();
+
+    @Query("SELECT * FROM reading_session WHERE book =:bookTitle")
+    LiveData<List<ReadingSessionDB>> fetchReadingSessionsForBook(String bookTitle);
+
+    @Delete
+    void deleteReadingSession(ReadingSessionDB sess);
 }

@@ -1,6 +1,6 @@
-package com.example.rafae.booktracker.views
+package com.example.rafae.booktracker.views.BookReadingSession
 
-import android.arch.lifecycle.LifecycleFragment
+import android.app.Fragment
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -9,49 +9,48 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.support.annotation.RequiresApi
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
+import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.example.android.notificationchannels.NotificationHelper
 import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.R
-import com.example.rafae.booktracker.StateMaintainer
-import com.example.rafae.booktracker.daggerExample.DaggerApplication
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import com.example.rafae.booktracker.notifications.BookStopwatchService
 import com.example.rafae.booktracker.notifications.messages.MessageEvent
 import com.example.rafae.booktracker.objects.BookDB
-import com.example.rafae.booktracker.objects.ReadingSession
-import com.example.rafae.booktracker.presenters.BooksListPresenter
+import com.example.rafae.booktracker.objects.ReadingSessionDB
+import com.example.rafae.booktracker.presenters.ShelfPresenter
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
+class BookUndergoReadingSessionView : Fragment(), BooksMVP.BooksListViewOps, ServiceConnection {
 
-class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnection {
 
     // views
-    @BindView(R.id.bookTitle)
+    @BindView(R.id.statusPage)
     lateinit var bookTitle: TextView
     @BindView(R.id.bookDateAdded)
     lateinit var bookDateAdded: TextView
-    @BindView(R.id.bookAuthor)
+    @BindView(R.id.statusDate)
     lateinit var bookAuthor: TextView
     @BindView(R.id.startStopText)
     lateinit var startStopText: TextView
 
 
-//    @BindView(R.id.bookStartReading)
+    //    @BindView(R.id.bookStartReading)
 //    lateinit var bookStartReading: Button
     @BindView(R.id.counterValue)
     lateinit var counterValue: TextView
@@ -70,14 +69,31 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        if (container != null) {
+//            container.removeAllViews()
+        }
+
+        // get book
+
         val rootView = inflater!!.inflate(R.layout.books_detail_counter, container, false)
 
-
         ButterKnife.bind(this, rootView)
+        // get book from arguments
+        var args = arguments
+        // get data via the key
+        book = args.getSerializable(ARG_BOOK) as Book
+        startPage = args.getInt(ARG_BOOK_CURRENT_PAGE)
+
+
+        // set views
+        bookTitle.text = book.title
+        bookAuthor.text = "by " + book.authors[0].name
+
+
         startMVPOps()
 
         // pass lifecycle
-        DaggerApplication.passLifeCycle(this)
+//        DaggerApplication.passLifeCycle(this)
 
         return rootView
     }
@@ -96,25 +112,7 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
     private var mPresenter: BooksMVP.PresenterOps? = null
 
 
-    lateinit var book: BookDB
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        startMVPOps()
-//        setContentView(R.layout.books_single_detail)
-//
-//        ButterKnife.bind(this)
-//
-//        // fetch book
-//        // get intent
-//        val extras = this.intent.getExtras();
-//        if (extras == null) {
-//            return;
-//        }
-//        // get data via the key
-//        book = extras.getSerializable(BOOK) as BookDB
-//
-//    }
+    lateinit var book: Book
 
 
     /**
@@ -136,24 +134,10 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
      * Creates a Presenter instance, saves the presenter in [StateMaintainer]
      */
     private fun initialize(view: BooksMVP.BooksListViewOps) {
-        mPresenter = BooksListPresenter(view)
+        mPresenter = ShelfPresenter(view)
 //        mStateMaintainer.put("TODO", mPresenter)
     }
 
-    /**
-     * Recovers Presenter and informs Presenter that occurred a config change.
-     * If Presenter has been lost, recreates a instance
-     */
-//    private fun reinitialize(view: BooksMVP.BooksListViewOps) {
-//        mPresenter = mStateMaintainer.get<BooksMVP.PresenterOps>("TODO")
-//
-//        if (mPresenter == null) {
-//            Log.w(TAG, "recreating Presenter")
-//            initialize(view)
-//        } else {
-//            mPresenter!!.onConfigurationChanged(view)
-//        }
-//    }
 
 
     // Show AlertDialog
@@ -162,37 +146,13 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
     }
 
 
-//    @OnClick(R.id.bookStartReading)
-//    fun startReadingBook(v: View) {
-//
-//        val btn = v as Button
-//
-//        book.reading = !book.reading
-//        if (book.reading) {
-//            Log.d("Books", "start reading")
-//            //
-//            Log.d("Books", book.currentPage.toString())
-//            btn.text = "Stop"
-//
-//            addReadingSession(book)
-//        } else {
-//            Log.d("Books", "stopped reading")
-//            btn.text = "Start"
-//            finishReadingSession(book)
-//        }
-//
-//        // TODO notification
-//
-//
-//    }
-
-    private val NOTIFICATION_ID: Int = 1
-
     enum class State {
         RUNNING, NOT_RUNNING
     }
 
-    private var state: NotifTest.State = State.NOT_RUNNING
+    private var state: State = State.NOT_RUNNING
+
+    private lateinit var startTime: Date
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OnClick(R.id.startCounter)
@@ -209,6 +169,10 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
                 startStopText.text = "Stop"
 
                 state = State.RUNNING
+
+                // get this time
+
+                startTime = Date()
             }
             State.RUNNING -> {
                 // stop service
@@ -218,35 +182,29 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
 
                 activity.unbindService(this)
 
+                finishReadingSession()
             }
         }
 
     }
 
-
-    private lateinit var mNotificationHelper: NotificationHelper
-
-
     /**
      * Finish reading session.
      */
-    private fun finishReadingSession(book: BookDB) {
-        // get current time
-        val current = Date()
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun finishReadingSession() {
 
-        // new reading session
-        readingSess!!.stop = current
 
         // prompt how many pages were read
         val alertDialog = AlertDialog.Builder(context)
         alertDialog.setTitle("Hey man, nice reading!")
         alertDialog.setMessage("In which page are you?")
 
-
         val input = EditText(context)
         val lp = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT)
+        input.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         input.layoutParams = lp
         alertDialog.setView(input)
 
@@ -272,43 +230,37 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
         alertDialog.show();
     }
 
-    private fun showInfoOnScreen(currentP: Int) {
-        // show info - time (start, stop, elapsed), pages read, reading percentage
-        book.currentPage += currentP
+    var startPage: Int = 0
 
-        Log.d("Current page", book.currentPage.toString())
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun showInfoOnScreen(currentPage: Int) {
+        // show info - time (start, stop, elapsed), pages read, reading pagesInfo
+//        book.currentPage += currentPage
+
+//        Log.d("Current elapsedTime", book.currentPage.toString())
 
 
 // check elapsed time
 
 // prompt user about how many pages were read
 
-
-        val diff: Long = readingSess!!.stop!!.time - readingSess!!.start!!.time
-        val diffSeconds = diff / 1000 % 60
-        val diffMinutes = diff / (60 * 1000) % 60
-        val diffHours = diff / (60 * 60 * 1000)
+        val diff: Long = elapsedSeconds.toLong()
+        val diffSeconds = diff % 60
+        val diffMinutes = diff / (60) % 60
+        val diffHours = diff / (60 * 60)
         println("Time in seconds: $diffSeconds seconds.")
         println("Time in minutes: $diffMinutes minutes.")
         println("Time in hours: $diffHours hours.")
 
-// add reading session to book
-//        book.readingSessions!!.add(readingSess!!)
+
         Toast.makeText(context, "Elapsed time: $diffHours:$diffMinutes:$diffSeconds.", Toast.LENGTH_SHORT).show()
-    }
 
 
-    var readingSess: ReadingSession? = null
+        // store ReadingSessionDB in room
+        val readSess = ReadingSessionDB(elapsedSeconds,startPage, currentPage, book.title, startTime.time)
 
-    /**
-     * Start reading session.
-     */
-    private fun addReadingSession(book: BookDB) {
-        // get current time
-        val current = Date()
+        mPresenter!!.addReadingSession(readSess)
 
-        // new reading session
-        readingSess = ReadingSession(current)
     }
 
 
@@ -336,7 +288,10 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
 
     override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
         val b: BookStopwatchService.MyBinder = binder as BookStopwatchService.MyBinder
-        s = b.service;
+        s = b.service
+
+        // set book name
+        s!!.bookName = book.title
     }
 
     override fun onServiceDisconnected(p0: ComponentName?) {
@@ -345,16 +300,17 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
 
     override fun onPause() {
         super.onPause()
-        activity.unbindService(this)
+//        activity.unbindService(this)
     }
+
+    var elapsedSeconds = 0
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent) {
         Log.d("Event", "Received event!")
-        val elapsedSeconds = s!!.counter
+        elapsedSeconds = s!!.counter
         // update Counter value
         counterValue.setText(elapsedSeconds.toString() + " s")
-
     }
 
     override fun onStart() {
@@ -368,18 +324,25 @@ class NotifTest : LifecycleFragment(), BooksMVP.BooksListViewOps, ServiceConnect
     }
 
     companion object {
-        val BOOK = "BOOK"
 
-        private val ARG_SECTION_NUMBER = "section_number"
+        private val ARG_BOOK = "book"
+        private val ARG_BOOK_CURRENT_PAGE = "page_current"
+
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        fun newInstance(sectionNumber: Int, supportFragmentManager: FragmentManager): NotifTest {
-            val fragment = NotifTest()
+        fun newInstance(book: Book, currentPage: Int): Fragment {
+            val fragment = BookUndergoReadingSessionView()
             val args = Bundle()
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber)
+            args.putSerializable(ARG_BOOK, book)
+            args.putInt(ARG_BOOK_CURRENT_PAGE, currentPage)
+
+
+            args.putSerializable(ARG_BOOK, book)
+
+
             fragment.arguments = args
 
 

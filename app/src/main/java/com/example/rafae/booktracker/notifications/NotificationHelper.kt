@@ -72,7 +72,7 @@ internal class NotificationHelper (context: Context) : ContextWrapper(context) {
      * Provide the builder rather than the notification it's self as useful for making
      * notification changes.
 
-     * @param title the title of the notification
+     * @param title the elapsedTime of the notification
      * *
      * @param body  the body text for the notification
      * *

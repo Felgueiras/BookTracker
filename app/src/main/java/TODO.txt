@@ -1,4 +1,5 @@
 - display books currently reading!
+- send user status to GoodReads
 - widget
 - update book
 - start/ stop

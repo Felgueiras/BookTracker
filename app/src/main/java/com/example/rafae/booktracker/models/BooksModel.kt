@@ -14,10 +14,10 @@ import android.widget.Toast
 import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.daggerExample.DaggerApplication
 import com.example.rafae.booktracker.models.goodreadpsAPI.CallAPI
+import com.example.rafae.booktracker.models.goodreadpsAPI.UserStatus
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
-import rx.Single
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import com.example.rafae.booktracker.objects.ReadingSessionDB
+import com.example.rafae.booktracker.presenters.BookDetailPresenter
 import javax.inject.Singleton
 
 
@@ -27,6 +27,63 @@ import javax.inject.Singleton
  */
 @Singleton
 class BooksModel private constructor() : BooksMVP.ModelOps {
+
+    /**
+     * Use LiveData to get ReadingSessions for a book.
+     */
+    override fun fetchReadingSessionsForBook(book: Book) {
+
+        // LiveData
+//         obeserve() first argument needs to extend LifeCycle (LifeCycleActivity)
+        val vehicleComponent = DaggerApplication.getComponent()
+        val vehicle = vehicleComponent.provideVehicle()
+        sampleDatabase = Room.databaseBuilder(vehicle.context,
+                SampleDatabase::class.java, "sample-db").build()
+        val booksList = sampleDatabase.daoAccess().fetchReadingSessionsForBook(book.title)
+        booksList.observe(vehicle.lifecycle, object : Observer<List<ReadingSessionDB>> {
+            override fun onChanged(sessionsArray: List<ReadingSessionDB>?) {
+
+                //Update your UI here.
+                Log.d("Room", "Fetched Reading Sessions")
+                for (sessions in sessionsArray!!) {
+                    Log.d("Status(Room)", sessions.endPage.toString())
+                }
+                (mPresenter as BookDetailPresenter).onReadingSessionForBookRetrieved(sessionsArray)
+            }
+        })
+    }
+
+    /**
+     * Persiste ReadingSessionDB using Room.
+     */
+    override fun addReadingSession(readingSession: ReadingSessionDB) {
+        RoomOps().execute(readingSession)
+    }
+
+    /**
+     * Fetch Status for a Book.
+     */
+    override fun fetchStatusForBook(book: Book) {
+//       // use Room
+//        val vehicleComponent = DaggerApplication.getComponent()
+//        val vehicle = vehicleComponent.provideVehicle()
+//        sampleDatabase = Room.databaseBuilder(vehicle.context,
+//                SampleDatabase::class.java, "sample-db").build()
+//        val booksList = sampleDatabase.daoAccess().fetchAllData()
+//        booksList.observe(vehicle.lifecycle, object : Observer<List<UserStatus>> {
+//            override fun onChanged(statusArray: List<UserStatus>?) {
+//                //Update your UI here.
+//                Log.d("Room", "Fetched all data")
+//                for (status in statusArray!!) {
+//                    Log.d("Status(Room)", status.user_status_id.toString())
+//                }
+////                mPresenter!!.onBookInserted(statusArray as ArrayList<BookDB>)
+//            }
+//        })
+
+        CallAPI().call(mPresenter = mPresenter, act = CallAPI.API_ACTION.GET_STATUS)
+
+    }
 
     /**
      * - private constructor is used to ensure this class can’t be initialized anywhere except inside of this class.
@@ -47,7 +104,7 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
     }
 
     // Presenter reference
-    var mPresenter: BooksMVP.RequiredPresenterOps? = null
+    var mPresenter: Object? = null
 
 
 //    private val sampleDatabase: SampleDatabase
@@ -68,7 +125,7 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
     }
 
 
-    private inner class DatabaseAsync : AsyncTask<Void, Void, Void>() {
+    private inner class RoomOps : AsyncTask<ReadingSessionDB, Void, Void>() {
 
         override fun onPreExecute() {
             super.onPreExecute()
@@ -76,22 +133,21 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
             //Perform pre-adding operation here.
         }
 
-        override fun doInBackground(vararg voids: Void): Void? {
-            //Let's add some dummy data to the database.
-//            val book = Book()
-//            book.title = "Booky"
-//            book.author = "Me!"
+        override fun doInBackground(vararg voids: ReadingSessionDB): Void? {
+            // get list
+            val sess = voids[0]
 
-            Log.d("Books", "fetched data!")
+            //Let's add some dummy data to the database.
+            val vehicleComponent = DaggerApplication.getComponent()
+            val vehicle = vehicleComponent.provideVehicle()
+            sampleDatabase = Room.databaseBuilder(vehicle.context,
+                    SampleDatabase::class.java, "sample-db").build()
+            // check if in DB
+            sampleDatabase.daoAccess().insertReadingSession(sess)
 
             return null
         }
 
-        override fun onPostExecute(aVoid: Void) {
-            super.onPostExecute(aVoid)
-
-            //To after addition operation here.
-        }
     }
 
 
@@ -102,7 +158,7 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
     /**
      * Fetch books from GoodReads.
      */
-    override fun fetchBooks() {
+    override fun fetchBooks(shelf: String) {
         // LiveData code
         // fetch context
         val vehicleComponent = DaggerApplication.getComponent()
@@ -110,9 +166,8 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
         context = vehicle.context
         lifecycle = vehicle.lifecycle
 
-        CallAPI().call(mPresenter)
-
-
+        // get books from goodreads
+        CallAPI().call(mPresenter, shelf, CallAPI.API_ACTION.GET_BOOKS)
     }
 
 
@@ -136,7 +191,7 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
 //                //Update your UI here.
 //                Log.d("Room", "Fetched all data")
 //                for (univ in books!!) {
-//                    Log.d("Univ", univ.title + "")
+//                    Log.d("Univ", univ.elapsedTime + "")
 //                }
 //                mPresenter!!.onBookInserted(books as ArrayList<BookDB>)
 //            }
@@ -171,6 +226,34 @@ class BooksModel private constructor() : BooksMVP.ModelOps {
     override fun removeNote(note: Note) {
         // data business logic
         // ...
-        mPresenter!!.onNoteRemoved(note)
+//        mPresenter!!.onNoteRemoved(note)
+    }
+}
+
+private class DatabaseAsync : AsyncTask<List<UserStatus>, Void, Void>() {
+
+
+    lateinit var sampleDatabase: SampleDatabase
+
+    override fun doInBackground(vararg voids: List<UserStatus>): Void? {
+        // get list
+        val status = voids[0]
+
+
+        //Let's add some dummy data to the database.
+        val vehicleComponent = DaggerApplication.getComponent()
+        val vehicle = vehicleComponent.provideVehicle()
+        sampleDatabase = Room.databaseBuilder(vehicle.context,
+                SampleDatabase::class.java, "sample-db").build()
+        // check if in DB
+        sampleDatabase.daoAccess().insertMultipleListRecord(status)
+
+        return null
+    }
+
+    override fun onPostExecute(aVoid: Void) {
+        super.onPostExecute(aVoid)
+
+        //To after addition operation here.
     }
 }

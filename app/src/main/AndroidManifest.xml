@@ -3,6 +3,9 @@
     package="com.example.rafae.booktracker">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
 
     <application
         android:name=".daggerExample.DaggerApplication"
@@ -12,8 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".views.BooksListView"></activity>
-        <activity android:name=".daggerExample.DaggerActivity"></activity>
+        <activity android:name=".daggerExample.DaggerActivity" />
         <activity android:name=".views.BookSingleView" />
         <activity android:name=".views.BookAddView" />
 
@@ -29,19 +31,33 @@
 
         <activity
             android:name=".DrawerActivity"
-            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+            <category android:name="android.intent.category.LAUNCHER" />
+            <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
         <service
             android:name=".notifications.BookStopwatchService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".oauth.LoginActivity">
+
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
+
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+                <!--<category android:name="android.intent.category.BROWSABLE" />-->
+
+                <!--<data-->
+                    <!--android:host="redirecturi"-->
+                    <!--android:scheme="your" />-->
+            <!--</intent-filter>-->
+
+        </activity>
     </application>
 
 </manifest>

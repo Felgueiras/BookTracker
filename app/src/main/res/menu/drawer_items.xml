@@ -13,6 +13,10 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="Currently reading" />
         <item
+            android:id="@+id/read"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Read" />
+        <item
             android:id="@+id/spotify"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Spotify" />

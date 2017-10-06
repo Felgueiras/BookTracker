@@ -1,7 +1,8 @@
-package com.example.rafae.booktracker.views
+package com.example.rafae.booktracker.views.Shelf
 
+import android.app.Fragment
+import android.app.FragmentTransaction
 import android.content.Context
-import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +16,14 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
+import com.example.rafae.booktracker.DrawerActivity
+import com.example.rafae.booktracker.views.BookDetail.BookDetailView
+
 
 /**
  * Created by felguiras on 15/09/2017.
  */
-internal class BooksListAdapter(private val books: ArrayList<Book>, private val context: Context) : RecyclerView.Adapter<BooksListAdapter.BookInListHolder>() {
+internal class ShelfViewAdapter(private val books: ArrayList<Book>, private val context: Context) : RecyclerView.Adapter<ShelfViewAdapter.BookInListHolder>() {
 
     var myBooks: ArrayList<Book>? = books
 
@@ -42,9 +46,9 @@ internal class BooksListAdapter(private val books: ArrayList<Book>, private val 
 
     class BookInListHolder(view: View, private val context: Context) : RecyclerView.ViewHolder(view) {
         // ButterKnife
-        @BindView(R.id.bookTitle)
+        @BindView(R.id.statusPage)
         lateinit var title: TextView
-        @BindView(R.id.bookAuthor)
+        @BindView(R.id.statusDate)
         lateinit var author: TextView
         lateinit var completion: TextView
         lateinit var avgRating: TextView
@@ -53,25 +57,34 @@ internal class BooksListAdapter(private val books: ArrayList<Book>, private val 
         init {
             ButterKnife.bind(this, view)
 
-            title = view.findViewById(R.id.bookTitle)
-            author = view.findViewById(R.id.bookAuthor)
-            completion = view.findViewById(R.id.bookCompletion)
+            title = view.findViewById(R.id.statusPage)
+            author = view.findViewById(R.id.statusDate)
+            completion = view.findViewById(R.id.statusPercentage)
             avgRating = view.findViewById(R.id.avgRating)
             pubYear = view.findViewById(R.id.pubYear)
 
             view.setOnClickListener {
-                val intent = Intent(context, BookSingleView::class.java)
-                intent.putExtra(BookSingleView.BOOK, book)
-                context.startActivity(intent)
+//                val intent = Intent(context, BookDetailView::class.java)
+//                intent.putExtra(BookSingleView.BOOK, book)
+//                context.startActivity(intent)
+                val f = (view.context as DrawerActivity).fragmentManager.findFragmentById(R.id.current_fragment)
+                val newFragment:Fragment = BookDetailView.Companion.newInstance(1, book)
+                (view.context as DrawerActivity).fragmentManager.beginTransaction()
+//                        .hide(f)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .add(R.id.current_fragment,newFragment )
+                        .addToBackStack(null)
+                        .commit()
             }
         }
 
         lateinit var book: Book
 
         fun bindBook(bk: Book) {
+            book = bk
             title.text = bk.title
             author.text = "by "+bk.authors[0].name
-            // TODO get book completion
+            // TODO get book pagesInfo
             val completionVal:Int = 50
             completion.text = """${completionVal.toString()}%"""
             // rating - number ratings

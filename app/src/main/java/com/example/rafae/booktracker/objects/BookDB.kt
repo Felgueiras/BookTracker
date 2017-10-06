@@ -32,7 +32,7 @@ class BookDB(author: String, title: String, date: Date, pages: Int) : Serializab
     @Ignore
     var reading: Boolean = false
     @Ignore
-    var readingSessions: ArrayList<ReadingSession>? = null
+    var readingSessions: ArrayList<ReadingSessionDB>? = null
 
 
 }

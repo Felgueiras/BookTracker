@@ -24,7 +24,7 @@ public class Review implements Serializable {
     private int votes;
     @Element
     private String url;
-    @Element(name = "started_at")
+    @Element(name = "started_at", required = false)
     private String startingDate;
     @Element(name = "date_added")
     private String dateAdded;

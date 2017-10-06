@@ -3,21 +3,50 @@ package com.example.rafae.booktracker.presenters
 import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.models.BooksModel
 import com.example.rafae.booktracker.models.Note
+import com.example.rafae.booktracker.models.goodreadpsAPI.UserStatus
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
-//import com.example.rafae.booktracker.objects.BookDB
-import com.example.rafae.booktracker.views.BooksListView
-
+import com.example.rafae.booktracker.objects.ReadingSessionDB
 import java.lang.ref.WeakReference
-import java.util.Date
+import java.util.*
 
 /**
  * Created by rafae on 24/09/2017.
  */
-class BooksListPresenter(mView: BooksMVP.BooksListViewOps) : BooksMVP.RequiredPresenterOps, BooksMVP.PresenterOps {
+class BookDetailPresenter(mView: BooksMVP.BookDetailViewOps) : BooksMVP.RequiredBookDetailPresenterOps, BooksMVP.BookDetailPresenterOps {
+
+    override fun onReadingSessionForBookRetrieved(sessions: List<ReadingSessionDB>) {
+        mView!!.get()!!.onReadingSessionForBookRetrieved(sessions)
+    }
+
+    /**
+     * Fetch reading sessions for a book.
+     */
+    override fun fetchReadingSessionsForBook(book: Book) {
+        val m = mModel as BooksModel
+        m.mPresenter = this as Object
+        mModel.fetchReadingSessionsForBook(book)
+    }
+
+    /**
+     * Give status updates to the view.
+     */
+    override fun onStatusForBookRetrieved(userStatusUpdates: MutableList<UserStatus>) {
+        mView!!.get()!!.statusForBookretrieved(userStatusUpdates)
+
+    }
+
+    /**
+     * Fetch user status update for this book.
+     */
+    override fun fetchStatusForBook(book: Book) {
+        val m = mModel as BooksModel
+        m.mPresenter = this as Object
+        mModel.fetchStatusForBook(book)
+    }
 
 
     // Layer View reference
-    private var mView: WeakReference<BooksMVP.BooksListViewOps>? = null
+    private var mView: WeakReference<BooksMVP.BookDetailViewOps>? = null
     // Layer Model reference
     private val mModel: BooksMVP.ModelOps
 
@@ -27,11 +56,11 @@ class BooksListPresenter(mView: BooksMVP.BooksListViewOps) : BooksMVP.RequiredPr
     private val date: Date? = null
 
     init {
-        this.mView = WeakReference<BooksMVP.BooksListViewOps>(mView)
+        this.mView = WeakReference<BooksMVP.BookDetailViewOps>(mView)
         // access model
         this.mModel = BooksModel.instance
         // set the current presenter
-        mModel.mPresenter = this
+//        mModel.mPresenter = this
     }
 
     /**
@@ -39,8 +68,8 @@ class BooksListPresenter(mView: BooksMVP.BooksListViewOps) : BooksMVP.RequiredPr
      *
      * @param view View reference
      */
-    override fun onConfigurationChanged(view: BooksMVP.BooksListViewOps) {
-        mView = WeakReference<BooksMVP.BooksListViewOps>(view)
+    override fun onConfigurationChanged(view: BooksMVP.BookDetailViewOps) {
+        mView = WeakReference<BooksMVP.BookDetailViewOps>(view)
     }
 
     /**
@@ -56,14 +85,6 @@ class BooksListPresenter(mView: BooksMVP.BooksListViewOps) : BooksMVP.RequiredPr
         }
     }
 
-    /**
-     * Called by user interaction from [BooksListView]
-     * creates a new Note and sends it to the model.
-     */
-    override fun newBook(author: String, title: String, pages: Int) {
-//        val book =  Book(author, title, getDate(), pages)
-//        mModel.insertBook(book)
-    }
 
     /**
      * Called from [BooksListView],
@@ -73,29 +94,13 @@ class BooksListPresenter(mView: BooksMVP.BooksListViewOps) : BooksMVP.RequiredPr
         mModel.removeNote(note)
     }
 
-    override fun fetchBooks() {
+    override fun fetchBooks(shelf: String) {
         // register as current presenter
         val m = mModel as BooksModel
-        m.mPresenter = this
-        mModel.fetchBooks()
+//        m.mPresenter = this
+        mModel.fetchBooks(shelf)
     }
 
-    /**
-     * Called from [MainModel]
-     * when a Note is inserted successfully
-     */
-    override fun onBookInserted(books: ArrayList<Book>) {
-//        mView!!.get()!!.showToast("New register added at " + books.author)
-        mView!!.get()!!.newBookAdded(books)
-    }
-
-    /**
-     * Receives call from [MainModel]
-     * when Note is removed
-     */
-    override fun onNoteRemoved(noteRemoved: Note) {
-        mView!!.get()!!.showToast("Note removed")
-    }
 
     /**
      * receive errors

@@ -8,7 +8,7 @@
         android:id="@+id/statusPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Title"
+        android:text="Page"
         android:textStyle="italic|bold"
         android:textSize="20sp"/>
 
@@ -17,21 +17,8 @@
         android:id="@+id/statusDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Author"/>
+        android:text="Date"/>
 
-    <TextView
-        android:layout_below="@id/statusDate"
-        android:id="@+id/avgRating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Avg"/>
-
-    <TextView
-        android:layout_below="@id/avgRating"
-        android:id="@+id/pubYear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pub year"/>
 
     <TextView
         android:layout_alignParentRight="true"

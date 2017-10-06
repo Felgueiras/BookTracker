@@ -1,7 +1,10 @@
 package com.example.rafae.booktracker
 
 import com.example.rafae.booktracker.models.Note
+import com.example.rafae.booktracker.models.goodreadpsAPI.UserStatus
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
+import com.example.rafae.booktracker.objects.BookDB
+import com.example.rafae.booktracker.objects.ReadingSessionDB
 
 /**
  * Created by rafae on 24/09/2017.
@@ -25,6 +28,18 @@ interface BooksMVP {
         fun showAlert(msg: String)
     }
 
+    interface BookDetailViewOps {
+        fun showToast(msg: String)
+
+
+        fun showAlert(msg: String)
+
+        fun statusForBookretrieved(userStatusUpdates: MutableList<UserStatus>)
+
+        fun onReadingSessionForBookRetrieved(sessions: List<ReadingSessionDB>)
+
+    }
+
     /**
      * Operations offered from View to View
      * View -> Presenter
@@ -38,7 +53,28 @@ interface BooksMVP {
 
         fun removeBook(nota: Note)
 
-        fun fetchBooks()
+        fun fetchBooks(shelf: String)
+
+        fun fetchStatusForBook(book: Book)
+
+        fun addReadingSession(readingSession: ReadingSessionDB)
+
+
+    }
+
+    interface BookDetailPresenterOps {
+        fun onConfigurationChanged(view: BookDetailViewOps)
+
+        fun onDestroy(isChangingConfig: Boolean)
+
+
+        fun removeBook(nota: Note)
+
+        fun fetchBooks(shelf: String)
+
+        fun fetchStatusForBook(book: Book)
+
+        fun fetchReadingSessionsForBook(book:Book)
     }
 
     /**
@@ -51,7 +87,16 @@ interface BooksMVP {
         fun onNoteRemoved(notaRemovida: Note)
 
         fun onError(errorMsg: String)
-        // Any other returning operation Model -> Presenter
+
+    }
+
+    interface RequiredBookDetailPresenterOps {
+
+        fun onError(errorMsg: String)
+
+        fun onStatusForBookRetrieved(userStatusUpdates: MutableList<UserStatus>)
+
+        fun onReadingSessionForBookRetrieved(sessions: List<ReadingSessionDB>)
     }
 
     /**
@@ -65,7 +110,13 @@ interface BooksMVP {
 
         fun onDestroy()
 
-        fun fetchBooks()
+        fun fetchBooks(shelf: String)
+
+        fun fetchStatusForBook(book: Book)
+
+        fun addReadingSession(readingSession: ReadingSessionDB)
+
+        fun fetchReadingSessionsForBook(book:Book)
 
 
     }

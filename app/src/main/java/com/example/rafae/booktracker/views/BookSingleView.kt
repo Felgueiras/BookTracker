@@ -14,26 +14,26 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
-import butterknife.OnClick
 import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.StateMaintainer
 import com.example.rafae.booktracker.objects.BookDB
-import com.example.rafae.booktracker.objects.ReadingSession
+import com.example.rafae.booktracker.objects.ReadingSessionDB
 import java.util.*
 import android.widget.LinearLayout
 import android.widget.EditText
 import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
-import com.example.rafae.booktracker.presenters.BooksListPresenter
+import com.example.rafae.booktracker.presenters.ShelfPresenter
 import kotlin.collections.ArrayList
 
 
 class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
+
+
     override fun newBookAdded(books: ArrayList<Book>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -55,9 +55,9 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     private var mPresenter: BooksMVP.PresenterOps? = null
 
     // views
-    @BindView(R.id.bookTitle)
+    @BindView(R.id.statusPage)
     lateinit var bookTitle: TextView
-    @BindView(R.id.bookAuthor)
+    @BindView(R.id.statusDate)
     lateinit var bookAuthor: TextView
     @BindView(R.id.bookDateAdded)
     lateinit var bookDateAdded: TextView
@@ -112,7 +112,7 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
      * Creates a Presenter instance, saves the presenter in [StateMaintainer]
      */
     private fun initialize(view: BooksMVP.BooksListViewOps) {
-        mPresenter = BooksListPresenter(view)
+        mPresenter = ShelfPresenter(view)
         mStateMaintainer.put("TODO", mPresenter)
     }
 
@@ -215,8 +215,8 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
         /**
          * Set the text of the notification. This sample sets the three most commononly used
          * text areas:
-         * 1. The content title, which appears in large type at the top of the notification
-         * 2. The content text, which appears in smaller text below the title
+         * 1. The content elapsedTime, which appears in large type at the top of the notification
+         * 2. The content text, which appears in smaller text below the elapsedTime
          * 3. The subtext, which appears under the text on newer devices. Devices running
          * versions of Android prior to 4.2 will ignore this field, so don't use it for
          * anything vital!
@@ -256,7 +256,7 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
         // prompt how many pages were read
         val alertDialog = AlertDialog.Builder(this)
         alertDialog.setTitle("Hey man, nice reading!")
-        alertDialog.setMessage("In which page are you?")
+        alertDialog.setMessage("In which elapsedTime are you?")
 
 
         val input = EditText(this)
@@ -289,10 +289,10 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     }
 
     private fun showInfoOnScreen(currentP: Int) {
-        // show info - time (start, stop, elapsed), pages read, reading percentage
+        // show info - time (start, stop, elapsed), pages read, reading pagesInfo
         book.currentPage += currentP
 
-        Log.d("Current page", book.currentPage.toString())
+        Log.d("Current elapsedTime", book.currentPage.toString())
 
 
 // check elapsed time
@@ -300,7 +300,7 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
 // prompt user about how many pages were read
 
 
-        val diff: Long = readingSess!!.stop!!.time - readingSess!!.start!!.time
+        val diff: Long = readingSess!!.stop!!.time - readingSess!!.startTime!!.time
         val diffSeconds = diff / 1000 % 60
         val diffMinutes = diff / (60 * 1000) % 60
         val diffHours = diff / (60 * 60 * 1000)
@@ -314,7 +314,7 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
     }
 
 
-    var readingSess: ReadingSession? = null
+    var readingSess: ReadingSessionDB? = null
 
     /**
      * Start reading session.
@@ -324,7 +324,7 @@ class BookSingleView : AppCompatActivity(), BooksMVP.BooksListViewOps {
         val current = Date()
 
         // new reading session
-        readingSess = ReadingSession(current)
+//        readingSess = ReadingSessionDB(current)
     }
 
 
