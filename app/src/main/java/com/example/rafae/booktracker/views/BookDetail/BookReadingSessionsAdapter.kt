@@ -15,7 +15,7 @@ import com.example.rafae.booktracker.objects.ReadingSessionDB
 /**
  * Created by felguiras on 15/09/2017.
  */
-internal class BookReadingSessionsViewAdapter(private val readingSessions: List<ReadingSessionDB>, private val context: Context, val book: Book) : RecyclerView.Adapter<BookReadingSessionsViewAdapter.BookReadingSessionHolder>() {
+internal class BookReadingSessionsAdapter(private val readingSessions: List<ReadingSessionDB>, private val context: Context, val book: Book) : RecyclerView.Adapter<BookReadingSessionsAdapter.BookReadingSessionHolder>() {
 
     var myBooks: List<ReadingSessionDB> = readingSessions
 
@@ -77,7 +77,7 @@ internal class BookReadingSessionsViewAdapter(private val readingSessions: List<
             pagesInfo.text = "Read from " + session.startPage.toString() + " - " + session.endPage.toString() +
                     " (" + pagesRead + ")"
             // speed
-            readingSpeed.text = TimeHelpers.getReadingSpeed(session.readingTime, pagesRead).toString() + " pages/s"
+            readingSpeed.text = TimeHelpers.getReadingSpeed(session).toString() + " pages/m"
             // percentage
             var percentageRead = Math.round(session.endPage!!.toFloat() / book.num_pages * 100)
             percentage.text = percentageRead.toString() + " %"

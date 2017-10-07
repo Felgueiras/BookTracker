@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:title="Continue reading"
-        android:id="@+id/continueReading"></item>
+    <item
+        android:id="@+id/continueReading"
+        android:icon="@drawable/ic_play_circle_outline_black_24dp"
+        android:title="Continue reading"
+        android:iconTint="@color/colorAccent"
+        android:iconTintMode="add"
+        app:showAsAction="always" />
 </menu>

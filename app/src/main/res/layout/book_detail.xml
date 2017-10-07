@@ -1,35 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#ffffff"
+    android:orientation="vertical"
     android:padding="10dp">
 
     <TextView
         android:id="@+id/statusPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@id/readingInfo"
+
         android:text="Title"
-        android:textStyle="italic|bold"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:textStyle="italic|bold" />
 
     <TextView
         android:id="@+id/statusDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/statusPage"
         android:text="Author" />
 
     <TextView
         android:id="@+id/bookDateAdded"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/statusDate"
         android:text="Date added:" />
+
+    <LinearLayout
+        android:id="@+id/readingInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/readingPercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="%" />
+
+        <TextView
+            android:id="@+id/readingSpeedAverage"
+            android:layout_below="@id/readingPercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="pages/m" />
+    </LinearLayout>
+
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/readingSessionsRecycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"
+        android:layout_below="@id/bookDateAdded" />
 
-</LinearLayout>
+</RelativeLayout>

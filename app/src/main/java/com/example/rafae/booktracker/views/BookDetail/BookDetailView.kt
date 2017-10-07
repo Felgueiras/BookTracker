@@ -22,6 +22,7 @@ import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.DrawerActivity
 import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.StateMaintainer
+import com.example.rafae.booktracker.helpers.TimeHelpers
 import com.example.rafae.booktracker.models.goodreadpsAPI.UserStatus
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import com.example.rafae.booktracker.notifications.BookStopwatchService
@@ -47,13 +48,23 @@ class BookDetailView : Fragment(), BooksMVP.BookDetailViewOps, ServiceConnection
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onReadingSessionForBookRetrieved(sessions: List<ReadingSessionDB>) {
         // update recycler view
-        val adapter = BookReadingSessionsViewAdapter(sessions, context, book)
+        val adapter = BookReadingSessionsAdapter(sessions, context, book)
 
         this.sessions = sessions
 
-//        this.bookStatus = userStatusUpdates
         readingSessionsRecycler.adapter = adapter
         adapter.notifyDataSetChanged()
+
+        // display reading percentage
+        if (sessions.size == 0) {
+            readingPercentage.text = "not read"
+            readingSpeedAverage.text = ""
+        } else {
+            var percentageRead = Math.round(sessions.last().endPage!!.toFloat() / book.num_pages * 100)
+            readingPercentage.text = percentageRead.toString() + " %"
+            // get average reading speed
+            readingSpeedAverage.text = TimeHelpers.getAverageReadingSpeed(sessions).toString() + " pages/m"
+        }
     }
 
     private lateinit var bookStatus: MutableList<UserStatus>
@@ -64,7 +75,7 @@ class BookDetailView : Fragment(), BooksMVP.BookDetailViewOps, ServiceConnection
     @RequiresApi(Build.VERSION_CODES.M)
     override fun statusForBookretrieved(userStatusUpdates: MutableList<UserStatus>) {
         // update recycler view
-//        val adapter = BookReadingSessionsViewAdapter(userStatusUpdates, context, book)
+//        val adapter = BookReadingSessionsAdapter(userStatusUpdates, context, book)
 
         this.bookStatus = userStatusUpdates
 //        statusRecycler.adapter = adapter
@@ -75,6 +86,7 @@ class BookDetailView : Fragment(), BooksMVP.BookDetailViewOps, ServiceConnection
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -152,6 +164,10 @@ class BookDetailView : Fragment(), BooksMVP.BookDetailViewOps, ServiceConnection
 
         startMVPOps()
 
+
+        // set title
+        activity.title = book.title
+
         // fetch status about this book
         return rootView
     }
@@ -161,10 +177,6 @@ class BookDetailView : Fragment(), BooksMVP.BookDetailViewOps, ServiceConnection
         // set views
         statusPage.text = book.title
         statusDate.text = "by " + book.authors[0].name
-
-        // TODO get book pagesInfo
-        val completionVal: Int = 50
-
 
         // pass lifecycle
 //        DaggerApplication.passLifeCycle(this)

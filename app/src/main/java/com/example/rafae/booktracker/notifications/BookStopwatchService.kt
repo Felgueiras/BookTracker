@@ -24,7 +24,7 @@ class BookStopwatchService : Service() {
     // elapsed seconds since started to read
     var counter = 0
 
-    var bookName:String? = null
+    var bookName: String? = null
 
     val wordList: List<String> get() = resultList
 
@@ -56,18 +56,27 @@ class BookStopwatchService : Service() {
 
         timer = Timer()
         timer.scheduleAtFixedRate(object : TimerTask() {
+
             @RequiresApi(Build.VERSION_CODES.O)
             override fun run() {
                 when (running) {
                     true -> {
                         counter++
-                        Log.d("BookTracker stopwatch: ", counter.toString())
-
                         // launch notification
                         mNotificationHelper = NotificationHelper(applicationContext)
+
+                        val counterText: String
+                        // counter info
+                        if (counter < 60) {
+                            counterText = counter.toString() + " s"
+                        } else {
+                            // display minutes and seconds
+                            counterText = (counter / 60).toString() + "m:" + counter % 60 + "s"
+                        }
+
                         mNotificationHelper.notify(MainActivity.NOTIFICATION_FOLLOW, mNotificationHelper.getNotificationElapsedTime(
-                                "Reading "+bookName,
-                                counter.toString() + " s"))
+                                "Reading " + bookName,
+                                counterText))
 
                         // launch Event
                         EventBus.getDefault().post(MessageEvent(counter))

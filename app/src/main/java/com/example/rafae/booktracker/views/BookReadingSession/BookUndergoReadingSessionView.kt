@@ -1,5 +1,6 @@
 package com.example.rafae.booktracker.views.BookReadingSession
 
+import android.app.Dialog
 import android.app.Fragment
 import android.content.ComponentName
 import android.content.Context
@@ -16,10 +17,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -67,6 +65,12 @@ class BookUndergoReadingSessionView : Fragment(), BooksMVP.BooksListViewOps, Ser
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         if (container != null) {
@@ -83,6 +87,8 @@ class BookUndergoReadingSessionView : Fragment(), BooksMVP.BooksListViewOps, Ser
         // get data via the key
         book = args.getSerializable(ARG_BOOK) as Book
         startPage = args.getInt(ARG_BOOK_CURRENT_PAGE)
+
+        activity.title = book.title
 
 
         // set views
@@ -137,7 +143,6 @@ class BookUndergoReadingSessionView : Fragment(), BooksMVP.BooksListViewOps, Ser
         mPresenter = ShelfPresenter(view)
 //        mStateMaintainer.put("TODO", mPresenter)
     }
-
 
 
     // Show AlertDialog
@@ -195,39 +200,32 @@ class BookUndergoReadingSessionView : Fragment(), BooksMVP.BooksListViewOps, Ser
     private fun finishReadingSession() {
 
 
-        // prompt how many pages were read
-        val alertDialog = AlertDialog.Builder(context)
-        alertDialog.setTitle("Hey man, nice reading!")
-        alertDialog.setMessage("In which page are you?")
+        // custom dialog
+        val dialog: Dialog = Dialog(context);
+        dialog.setContentView(R.layout.finished_session_dialog);
+        dialog.setTitle("Title...");
 
-        val input = EditText(context)
-        val lp = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT)
-        input.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-        input.layoutParams = lp
-        alertDialog.setView(input)
-
-//        alertDialog.setIcon(R.drawable.key)
+        val checkBox: CheckBox = dialog.findViewById(R.id.checkBox)
+        val pageNumber: EditText = dialog.findViewById(R.id.pageNumber)
+        val okButton: Button = dialog.findViewById(R.id.okButton)
 
         var currentP: Int
 
-        alertDialog.setPositiveButton("YES"
-        ) {
-
-            dialog, which ->
-            run {
-                currentP = input.text.toString().toInt()
-                dialog.cancel()
-                showInfoOnScreen(currentP)
-            }
-
+        okButton.setOnClickListener {
+            // TODO validate page or use other form of control (slide with values, f.e.)
+            currentP = pageNumber.text.toString().toInt()
+            dialog.cancel()
+            showInfoOnScreen(currentP)
         }
 
-        alertDialog.setNegativeButton("NO"
-        ) { dialog, which -> dialog.cancel() }
+        checkBox.setOnClickListener {
+            currentP = book.num_pages
+            dialog.cancel()
+            showInfoOnScreen(currentP)
+            // TODO signal book was read
+        }
 
-        alertDialog.show();
+        dialog.show()
     }
 
     var startPage: Int = 0
@@ -257,7 +255,7 @@ class BookUndergoReadingSessionView : Fragment(), BooksMVP.BooksListViewOps, Ser
 
 
         // store ReadingSessionDB in room
-        val readSess = ReadingSessionDB(elapsedSeconds,startPage, currentPage, book.title, startTime.time)
+        val readSess = ReadingSessionDB(elapsedSeconds, startPage, currentPage, book.title, startTime.time)
 
         mPresenter!!.addReadingSession(readSess)
 

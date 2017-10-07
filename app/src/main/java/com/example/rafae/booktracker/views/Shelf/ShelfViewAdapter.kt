@@ -84,7 +84,7 @@ internal class ShelfViewAdapter(private val books: ArrayList<Book>, private val 
             book = bk
             title.text = bk.title
             author.text = "by "+bk.authors[0].name
-            // TODO get book pagesInfo
+            // TODO get last reading session for Book
             val completionVal:Int = 50
             completion.text = """${completionVal.toString()}%"""
             // rating - number ratings

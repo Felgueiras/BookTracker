@@ -63,6 +63,9 @@ class ShelfView : LifecycleFragment(), BooksMVP.BooksListViewOps {
         // fetch shelf
         shelf = arguments.getString(SHELF)
 
+        // set title
+        activity.title = "Currently Reading"
+
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
