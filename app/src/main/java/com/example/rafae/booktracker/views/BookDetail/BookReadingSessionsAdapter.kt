@@ -5,42 +5,77 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import butterknife.ButterKnife
 import com.example.rafae.booktracker.R
+import com.example.rafae.booktracker.helpers.ReadingSessionHelpers
 import com.example.rafae.booktracker.helpers.TimeHelpers
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import com.example.rafae.booktracker.objects.ReadingSessionDB
+import kotlinx.android.synthetic.main.book_reading_status.*
 
 /**
  * Created by felguiras on 15/09/2017.
  */
 internal class BookReadingSessionsAdapter(private val readingSessions: List<ReadingSessionDB>, private val context: Context, val book: Book) : RecyclerView.Adapter<BookReadingSessionsAdapter.BookReadingSessionHolder>() {
 
-    var myBooks: List<ReadingSessionDB> = readingSessions
+    private var fastest: ReadingSessionDB
+    private var slowest: ReadingSessionDB
+
+    val longest: ReadingSessionDB
+
+    private var shortest: ReadingSessionDB
+
+    private var morePagesRead: ReadingSessionDB
+
+    private var lessPagesRead: ReadingSessionDB
+
+    init {
+        // store references to the sessions to be highlighted
+        fastest = ReadingSessionHelpers.getFastestReadingSession(readingSessions)
+        slowest = ReadingSessionHelpers.getSlowestReadingSession(readingSessions)
+        longest = ReadingSessionHelpers.getLongestReadingSession(readingSessions)
+        shortest = ReadingSessionHelpers.getShortestReadingSession(readingSessions)
+        morePagesRead = ReadingSessionHelpers.getMorePagesReadReadingSession(readingSessions)
+        lessPagesRead = ReadingSessionHelpers.getLessPagesReadReadingSession(readingSessions)
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookReadingSessionHolder {
         val inflatedView = LayoutInflater.from(parent.context)
                 .inflate(R.layout.book_reading_status, parent, false)
-        return BookReadingSessionHolder(inflatedView, context)
+        return BookReadingSessionHolder(inflatedView, context, this)
     }
 
 
     override fun onBindViewHolder(holder: BookReadingSessionHolder, position: Int) {
         // get current book
-        val update = readingSessions[position]
-        holder.bindUpdate(update, book)
+        val readingSession = readingSessions[readingSessions.size - 1 - position]
+        holder.bindReadingSession(readingSession, book)
     }
 
     override fun getItemCount(): Int {
-        return myBooks!!.size
+        return readingSessions.size
     }
 
-    class BookReadingSessionHolder(view: View, private val context: Context) : RecyclerView.ViewHolder(view) {
+    /**
+     * Holder for a Reading Session.
+     */
+    class BookReadingSessionHolder(view: View, private val context: Context, val bookReadingSessionsAdapter: BookReadingSessionsAdapter) : RecyclerView.ViewHolder(view) {
         var elapsedTime: TextView
         var pagesInfo: TextView
         var readingSpeed: TextView
         var percentage: TextView
+        var progress: ProgressBar
+        // highlights
+        var longest: ImageView
+        var shortest: ImageView
+        var fastest: ImageView
+        var slowest: ImageView
+        var morePages: ImageView
+        var lessPages: ImageView
 
         init {
             ButterKnife.bind(this, view)
@@ -49,6 +84,14 @@ internal class BookReadingSessionsAdapter(private val readingSessions: List<Read
             pagesInfo = view.findViewById(R.id.startPage)
             readingSpeed = view.findViewById(R.id.readingSpeed)
             percentage = view.findViewById(R.id.readingPercentage)
+            progress = view.findViewById(R.id.progressVisual)
+            // highlights
+            longest = view.findViewById(R.id.longest)
+            shortest = view.findViewById(R.id.shortest)
+            fastest = view.findViewById(R.id.fastest)
+            slowest = view.findViewById(R.id.slowest)
+            morePages = view.findViewById(R.id.morePages)
+            lessPages = view.findViewById(R.id.lessPages)
 
 
             view.setOnClickListener {
@@ -68,21 +111,43 @@ internal class BookReadingSessionsAdapter(private val readingSessions: List<Read
 
         lateinit var book: Book
 
-        fun bindUpdate(session: ReadingSessionDB, book: Book) {
+        fun bindReadingSession(session: ReadingSessionDB, book: Book) {
 
             val pagesRead = session.endPage!! - session.startPage!!
 //            book = session
-            elapsedTime.text = "Read for " + session.readingTime.toString() + " seconds"
+            elapsedTime.text = "Read for " + TimeHelpers.convertSecondsToTimeString(session.readingTime) + " seconds"
 //            stopPage.text = session.endPage.toString()
             pagesInfo.text = "Read from " + session.startPage.toString() + " - " + session.endPage.toString() +
                     " (" + pagesRead + ")"
             // speed
             readingSpeed.text = TimeHelpers.getReadingSpeed(session).toString() + " pages/m"
             // percentage
-            var percentageRead = Math.round(session.endPage!!.toFloat() / book.num_pages * 100)
+            val percentageRead: Int = Math.round(session.endPage!!.toFloat() / book.num_pages * 100)
             percentage.text = percentageRead.toString() + " %"
 
+            progress.progress = percentageRead
+
             this.book = book
+
+            // check if to be highlighted (longest)
+            if (session.equals(bookReadingSessionsAdapter.longest)) {
+                longest.visibility = View.VISIBLE
+            }
+            if (session.equals(bookReadingSessionsAdapter.shortest)) {
+                shortest.visibility = View.VISIBLE
+            }
+            if (session.equals(bookReadingSessionsAdapter.fastest)) {
+                fastest.visibility = View.VISIBLE
+            }
+            if (session.equals(bookReadingSessionsAdapter.slowest)) {
+                slowest.visibility = View.VISIBLE
+            }
+            if (session.equals(bookReadingSessionsAdapter.morePagesRead)) {
+                morePages.visibility = View.VISIBLE
+            }
+            if (session.equals(bookReadingSessionsAdapter.lessPagesRead)) {
+                lessPages.visibility = View.VISIBLE
+            }
 
         }
 

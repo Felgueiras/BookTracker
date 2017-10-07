@@ -23,7 +23,7 @@ interface BooksMVP {
     interface BooksListViewOps {
         fun showToast(msg: String)
 
-        fun newBookAdded(books: ArrayList<Book>)
+        fun displayBooks(books: ArrayList<Book>)
 
         fun showAlert(msg: String)
     }

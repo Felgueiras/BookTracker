@@ -34,7 +34,7 @@ class BooksListView : LifecycleFragment(), BooksMVP.BooksListViewOps {
 
 //    var applicationContext: Context? = null
 
-    override fun newBookAdded(books: ArrayList<Book>) {
+    override fun displayBooks(books: ArrayList<Book>) {
 //         update recycler view
         val adapter = ShelfViewAdapter(books, context)
 

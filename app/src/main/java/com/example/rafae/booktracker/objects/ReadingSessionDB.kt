@@ -3,6 +3,7 @@ package com.example.rafae.booktracker.objects
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
+import com.example.rafae.booktracker.helpers.TimeHelpers
 import java.io.Serializable
 import java.util.*
 
@@ -24,7 +25,7 @@ class ReadingSessionDB(elapsedSeconds: Int, startPage: Int, currentPage: Int, bo
     @Ignore
     var stop: Date? = null
 
-    var readingTime:Int = elapsedSeconds
+    var readingTime: Int = elapsedSeconds
 
     var startPage: Int? = startPage
 
@@ -34,7 +35,14 @@ class ReadingSessionDB(elapsedSeconds: Int, startPage: Int, currentPage: Int, bo
 
     constructor() : this(0, 0, 0, "", 0)
 
+    override fun toString(): String {
 
+        return TimeHelpers.getReadingSpeed(this).toString()
+    }
+
+    fun pagesRead(): Int {
+        return endPage!! - startPage!!
+    }
 
 
 }

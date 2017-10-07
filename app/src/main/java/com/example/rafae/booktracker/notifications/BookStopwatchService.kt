@@ -9,6 +9,7 @@ import android.support.annotation.RequiresApi
 import android.util.Log
 import com.example.android.notificationchannels.MainActivity
 import com.example.android.notificationchannels.NotificationHelper
+import com.example.rafae.booktracker.helpers.TimeHelpers
 import java.util.*
 import com.example.rafae.booktracker.notifications.messages.MessageEvent
 import org.greenrobot.eventbus.EventBus
@@ -66,17 +67,11 @@ class BookStopwatchService : Service() {
                         mNotificationHelper = NotificationHelper(applicationContext)
 
                         val counterText: String
-                        // counter info
-                        if (counter < 60) {
-                            counterText = counter.toString() + " s"
-                        } else {
-                            // display minutes and seconds
-                            counterText = (counter / 60).toString() + "m:" + counter % 60 + "s"
-                        }
+
 
                         mNotificationHelper.notify(MainActivity.NOTIFICATION_FOLLOW, mNotificationHelper.getNotificationElapsedTime(
                                 "Reading " + bookName,
-                                counterText))
+                                TimeHelpers.convertSecondsToTimeString(counter)))
 
                         // launch Event
                         EventBus.getDefault().post(MessageEvent(counter))

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 
 
@@ -14,6 +15,7 @@ import java.util.ArrayList
 
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.bumptech.glide.Glide
 import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import com.example.rafae.booktracker.DrawerActivity
@@ -53,6 +55,7 @@ internal class ShelfViewAdapter(private val books: ArrayList<Book>, private val 
         lateinit var completion: TextView
         lateinit var avgRating: TextView
         lateinit var pubYear: TextView
+        lateinit var bookCover: ImageView
 
         init {
             ButterKnife.bind(this, view)
@@ -62,6 +65,7 @@ internal class ShelfViewAdapter(private val books: ArrayList<Book>, private val 
             completion = view.findViewById(R.id.statusPercentage)
             avgRating = view.findViewById(R.id.avgRating)
             pubYear = view.findViewById(R.id.pubYear)
+            bookCover = view.findViewById(R.id.bookCover)
 
             view.setOnClickListener {
 //                val intent = Intent(context, BookDetailView::class.java)
@@ -91,12 +95,8 @@ internal class ShelfViewAdapter(private val books: ArrayList<Book>, private val 
             avgRating.text = bk.avgRating.toString()
             // pub year
             pubYear.text = bk.pubYear
-
-
+            // load image (Glide)
+            Glide.with(context).load(book.image_url).into(bookCover);
         }
-
-
-
-
     }
 }

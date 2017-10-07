@@ -1,3 +1,5 @@
+- use meaningful icons
+- alerts when book is not read for some time
 - send user status to GoodReads
 - widget
 - update book

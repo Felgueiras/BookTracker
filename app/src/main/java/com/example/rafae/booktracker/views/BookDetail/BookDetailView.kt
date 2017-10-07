@@ -22,6 +22,7 @@ import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.DrawerActivity
 import com.example.rafae.booktracker.R
 import com.example.rafae.booktracker.StateMaintainer
+import com.example.rafae.booktracker.helpers.ReadingSessionHelpers
 import com.example.rafae.booktracker.helpers.TimeHelpers
 import com.example.rafae.booktracker.models.goodreadpsAPI.UserStatus
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
@@ -64,6 +65,8 @@ class BookDetailView : Fragment(), BooksMVP.BookDetailViewOps, ServiceConnection
             readingPercentage.text = percentageRead.toString() + " %"
             // get average reading speed
             readingSpeedAverage.text = TimeHelpers.getAverageReadingSpeed(sessions).toString() + " pages/m"
+            // time spent on book
+            timeSpentOnBook.text = TimeHelpers.getTotalTimeSpent(sessions)
         }
     }
 

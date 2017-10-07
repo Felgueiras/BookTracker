@@ -39,5 +39,26 @@ class TimeHelpers {
             return (Math.round(readingSpeed / sessions.size * 100) / 100).toFloat()
         }
 
+        fun convertSecondsToTimeString(seconds: Int): String {
+            // counter info
+            if (seconds < 60) {
+                return seconds.toString() + " s"
+            } else {
+                // display minutes and seconds
+                return (seconds / 60).toString() + "m:" + seconds % 60 + "s"
+            }
+        }
+
+        /**
+         * Get the total time spent on some sessions.
+         */
+        fun getTotalTimeSpent(sessions: List<ReadingSessionDB>): String {
+            var timeSpent: Int = 0
+            for (session in sessions) {
+                timeSpent += session.readingTime
+            }
+            return convertSecondsToTimeString(timeSpent)
+        }
+
     }
 }

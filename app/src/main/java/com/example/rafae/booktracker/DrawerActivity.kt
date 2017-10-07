@@ -20,7 +20,6 @@ import com.example.rafae.booktracker.views.Shelf.ShelfView.Companion.SHELF_READI
 import com.example.rafae.booktracker.views.BookDetail.BookDetailView
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.app_bar_drawer.*
-import com.zhaoxiaodan.miband.MiBand
 
 
 class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -64,17 +63,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private fun miBandStuff() {
 
 
-        val miband = MiBand(this)
 
-        val scanCallback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult?) {
-                val device = result!!.device
-                Log.d("Device", device.name)
-                // 根据情况展示
-            }
-        }
-
-        MiBand.startScan(scanCallback)
 
 
     }

@@ -85,8 +85,9 @@ dependencies {
     // Google API auth client
     compile group: 'com.google.oauth-client', name: 'google-oauth-client', version: '1.21.0'
 
-    // Mi Band
-    compile 'com.zhaoxiaodan.miband:miband-sdk:1.1.2'
+    // Glide
+    compile 'com.github.bumptech.glide:glide:4.2.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
 }
 repositories {
     mavenCentral()

@@ -22,7 +22,7 @@ import kotlin.collections.ArrayList
 class BookAddView : AppCompatActivity(), BooksMVP.BooksListViewOps {
 
 
-    override fun newBookAdded(books: ArrayList<Book>) {
+    override fun displayBooks(books: ArrayList<Book>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

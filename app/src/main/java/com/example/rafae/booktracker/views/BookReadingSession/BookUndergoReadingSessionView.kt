@@ -23,6 +23,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.example.rafae.booktracker.BooksMVP
 import com.example.rafae.booktracker.R
+import com.example.rafae.booktracker.helpers.TimeHelpers
 import com.example.rafae.booktracker.models.goodreadpsAPI.responseObjects.Book
 import com.example.rafae.booktracker.notifications.BookStopwatchService
 import com.example.rafae.booktracker.notifications.messages.MessageEvent
@@ -57,7 +58,7 @@ class BookUndergoReadingSessionView : Fragment(), BooksMVP.BooksListViewOps, Ser
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun newBookAdded(books: ArrayList<Book>) {
+    override fun displayBooks(books: ArrayList<Book>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -308,7 +309,7 @@ class BookUndergoReadingSessionView : Fragment(), BooksMVP.BooksListViewOps, Ser
         Log.d("Event", "Received event!")
         elapsedSeconds = s!!.counter
         // update Counter value
-        counterValue.setText(elapsedSeconds.toString() + " s")
+        counterValue.setText(TimeHelpers.convertSecondsToTimeString(elapsedSeconds))
     }
 
     override fun onStart() {

@@ -104,7 +104,7 @@ class ShelfPresenter(mView: BooksMVP.BooksListViewOps) : BooksMVP.RequiredPresen
      */
     override fun onBookInserted(books: ArrayList<Book>) {
 //        mView!!.get()!!.showToast("New register added at " + books.stopPage)
-        mView!!.get()!!.newBookAdded(books)
+        mView!!.get()!!.displayBooks(books)
     }
 
     /**

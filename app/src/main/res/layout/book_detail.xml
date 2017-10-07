@@ -42,18 +42,22 @@
             android:id="@+id/readingPercentage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:text="%" />
 
         <TextView
             android:id="@+id/readingSpeedAverage"
-            android:layout_below="@id/readingPercentage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:text="pages/m" />
-    </LinearLayout>
 
+        <TextView
+            android:id="@+id/timeSpentOnBook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="time spent" />
+    </LinearLayout>
 
 
     <android.support.v7.widget.RecyclerView

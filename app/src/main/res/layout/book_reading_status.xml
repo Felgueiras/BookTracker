@@ -35,4 +35,68 @@
         android:layout_below="@id/readingSpeed"
         android:text="Percentage" />
 
+    <LinearLayout
+        android:id="@+id/highlights"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/readingPercentage"
+        android:orientation="horizontal">
+
+        <!--Longest-->
+        <ImageView
+            android:id="@+id/longest"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/leak_canary_icon"
+            android:visibility="gone" />
+        <!--Shortest-->
+        <ImageView
+            android:id="@+id/shortest"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_menu_camera"
+            android:visibility="gone" />
+        <!--Fastest-->
+        <ImageView
+            android:id="@+id/fastest"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_more_2"
+            android:visibility="gone" />
+        <!--Slowest-->
+        <ImageView
+            android:id="@+id/slowest"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_less_2"
+            android:visibility="gone" />
+        <!--More pages-->
+        <ImageView
+            android:id="@+id/morePages"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_more"
+            android:visibility="gone" />
+        <!--Less pages-->
+        <ImageView
+            android:id="@+id/lessPages"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_less"
+            android:visibility="gone" />
+    </LinearLayout>
+
+
+    <ProgressBar
+        android:id="@+id/progressVisual"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/highlights"
+        android:layout_marginTop="10dp"
+        android:max="100"
+        android:progress="0"
+        android:scaleY="5" />
+
 </RelativeLayout>
